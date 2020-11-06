@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "npx http-server",
-    "fix": "npx prettier -w ."
+    "lint": "npx eslint . --ext .js,.mjs --fix --ignore-pattern dist/",
+    "fix": "npx prettier -w .",
+    "prepare": "npm run lint && npm run fix"
   },
   "repository": {
     "type": "git",

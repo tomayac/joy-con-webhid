@@ -22,6 +22,10 @@ footer {
   font-size: 0.8rem;
 }
 
+a {
+  color: #ff493e;
+}
+
 .joycon.rumble {
   animation: shake 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   transform: translate3d(0, 0, 0);
