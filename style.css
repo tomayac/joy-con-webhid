@@ -1,0 +1,78 @@
+:root {
+  /*color-scheme: dark light;*/
+}
+
+html {
+  max-width: 75ch;
+  padding: 2ch;
+  margin: auto;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 1rem;
+  font-family: system-ui, sans-serif;
+  font-size: 100%;
+}
+
+footer {
+  position: absolute;
+  bottom: 1rem;
+}
+
+.joycon.rumble {
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+#left.highlight,
+#right.highlight,
+#up.highlight,
+#down.highlight,
+#capture.highlight,
+#minus.highlight,
+#joycon-l .highlight {
+  outline: solid 2px #ff493e;
+}
+#l.highlight:after {
+  border-left-color: #ff493e;
+}
+
+#x.highlight,
+#y.highlight,
+#a.highlight,
+#b.highlight,
+#home.highlight,
+#plus.highlight,
+#joycon-r .highlight {
+  outline: solid 2px #00b2dc;
+}
+#r.highlight:after {
+  border-left-color: #00b2dc;
+}

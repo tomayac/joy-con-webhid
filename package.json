@@ -1,0 +1,39 @@
+{
+  "name": "joy-con-webhid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx http-server",
+    "fix": "npx prettier -w ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomayac/joy-con-webhid.git"
+  },
+  "author": "Thomas Steiner (tomac@google.com)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tomayac/joy-con-webhid/issues"
+  },
+  "homepage": "https://github.com/tomayac/joy-con-webhid#readme",
+  "devDependencies": {
+    "http-server": "^0.12.3",
+    "prettier": "^2.1.2",
+    "eslint": "^7.12.1",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "shx": "^0.3.3",
+    "terser": "^5.3.8"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    },
+    "extends": [
+      "google",
+      "prettier"
+    ]
+  }
+}
