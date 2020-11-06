@@ -81,6 +81,10 @@ const BUTTON_MAPPING = {
       name: 'StickDown',
       element: leftJoystick,
     },
+    [toPaddedString([0, 4, 8, 0, 128, 0, 128, 0, 128, 0, 128])]: {
+      name: 'StickButton',
+      element: leftJoystick,
+    },
   },
 
   // Joy-Con Right
@@ -142,6 +146,10 @@ const BUTTON_MAPPING = {
       name: 'StickUp',
       element: rightJoystick,
     },
+    [toPaddedString([0, 8, 8, 0, 128, 0, 128, 0, 128, 0, 128])]: {
+      name: 'StickButton',
+      element: leftJoystick,
+    },
   },
 };
 
@@ -182,7 +190,6 @@ const openDevices = () => {
 
 const onInputReport = (event) => {
   const { data, device, reportId } = event;
-  console.log(device.productName, reportId, data);
   if (reportId !== 0x3f) {
     return;
   }
@@ -279,5 +286,5 @@ const rumbleDevice = async (device) => {
   ];
   await device.sendReport(0x10, new Uint8Array(rumbleData));
 
-  console.log(`The "${device.productName}" HID device is rumbling...`);
+  console.log(`HID rumbling: ${device.productName}`);
 };
