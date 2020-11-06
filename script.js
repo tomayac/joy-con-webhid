@@ -203,12 +203,12 @@ const onInputReport = (event) => {
       joyConLeft.classList.add('rumble');
       setTimeout(() => {
         joyConLeft.classList.remove('rumble');
-      }, 200);
+      }, 400);
     } else {
       joyConRight.classList.add('rumble');
       setTimeout(() => {
         joyConRight.classList.remove('rumble');
-      }, 200);
+      }, 400);
     }
     setTimeout(() => {
       button.element.classList.remove('highlight');
