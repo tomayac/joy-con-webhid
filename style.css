@@ -1,5 +1,5 @@
 :root {
-  /*color-scheme: dark light;*/
+  color-scheme: dark light;
 }
 
 html {
@@ -19,10 +19,11 @@ body {
 footer {
   position: absolute;
   bottom: 1rem;
+  font-size: 0.8rem;
 }
 
 .joycon.rumble {
-  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: shake 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;

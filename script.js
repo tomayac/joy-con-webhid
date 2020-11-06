@@ -1,3 +1,4 @@
+const joyConLeft = document.querySelector('.productId8198');
 const left = document.querySelector('#left');
 const right = document.querySelector('#right');
 const up = document.querySelector('#up');
@@ -7,6 +8,7 @@ const minus = document.querySelector('#minus');
 const leftJoystick = document.querySelector('#joycon-l .joystick');
 const l = document.querySelector('#l');
 
+const joyConRight = document.querySelector('.productId8199');
 const x = document.querySelector('#x');
 const y = document.querySelector('#y');
 const a = document.querySelector('#a');
@@ -189,6 +191,18 @@ const onInputReport = (event) => {
   if (button) {
     const message = `User pressed button "${button.name}" on ${device.productName} (${device.productId}).`;
     button.element.classList.add('highlight');
+    rumbleDevice(device);
+    if (device.productId === 8198) {
+      joyConLeft.classList.add('rumble');
+      setTimeout(() => {
+        joyConLeft.classList.remove('rumble');
+      }, 200);
+    } else {
+      joyConRight.classList.add('rumble');
+      setTimeout(() => {
+        joyConRight.classList.remove('rumble');
+      }, 200);
+    }
     setTimeout(() => {
       button.element.classList.remove('highlight');
     }, 200);
@@ -230,3 +244,40 @@ document.querySelector('button').addEventListener('click', async () => {
     console.error(error.name, error.message);
   }
 });
+
+const rumbleDevice = async (device) => {
+  if (!device) {
+    return;
+  }
+  // Enable vibration
+  const enableVibrationData = [1, 0, 1, 64, 64, 0, 1, 64, 64, 0x48, 0x01];
+  await device.sendReport(0x01, new Uint8Array(enableVibrationData));
+
+  // Strong rumble (141 Hz), max amplitude.
+  const hf = 0x0098;
+  const lf = 0x46;
+  const hfa = 0x1e;
+  const lfa = 0x8047;
+  const lhf = hf;
+  const llf = lf;
+  const lhfa = hfa;
+  const llfa = lfa;
+  const rhf = hf;
+  const rlf = lf;
+  const rhfa = hfa;
+  const rlfa = lfa;
+  const rumbleData = [
+    0 & 0xff,
+    lhf & 0xff,
+    lhfa + ((lhf >>> 8) & 0xff),
+    llf + ((llfa >>> 8) & 0xff),
+    llfa & 0xff,
+    rhf & 0xff,
+    rhfa + ((rhf >>> 8) & 0xff),
+    rlf + ((rlfa >>> 8) & 0xff),
+    rlfa & 0xff,
+  ];
+  await device.sendReport(0x10, new Uint8Array(rumbleData));
+
+  console.log(`The "${device.productName}" HID device is rumbling...`);
+};
