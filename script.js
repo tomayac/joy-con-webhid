@@ -184,6 +184,7 @@ const openDevices = () => {
     if (!device.opened) {
       await device.open();
     }
+    await enableSimpleHIDMode(device);
     device.addEventListener('inputreport', onInputReport);
   });
 };
@@ -251,6 +252,11 @@ document.querySelector('button').addEventListener('click', async () => {
     console.error(error.name, error.message);
   }
 });
+
+const enableSimpleHIDMode = async (device) => {
+  const enableSimpleHIDModeData = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x3f];
+  await device.sendReport(0x01, new Uint8Array(enableSimpleHIDModeData));
+};
 
 const rumbleDevice = async (device) => {
   if (!device) {
