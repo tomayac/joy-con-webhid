@@ -1,14 +1,27 @@
 {
   "name": "joy-con-webhid",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "Joy-Con over WebHID ",
   "scripts": {
     "start": "npx http-server",
+    "clean": "shx rm -rf ./dist && mkdir dist",
     "lint": "npx eslint . --ext .js,.mjs --fix --ignore-pattern dist/",
-    "fix": "npx prettier -w .",
-    "prepare": "npm run lint && npm run fix"
+    "build:index": "npx terser ./src/index.js --toplevel --comments /@license/ --ecma=8 -o ./dist/index.js",
+    "build:joycon": "npx terser ./src/joycon.js --toplevel --comments /@license/ --ecma=8 -o ./dist/joycon.js",
+    "build:parse": "npx terser ./src/parse.js --toplevel --comments /@license/ --ecma=8 -o ./dist/parse.js",
+    "build": "npm run clean && npm run build:index && npm run build:joycon && npm run build:parse",
+    "prepare": "npm run lint && npm run fix && npm run build",
+    "fix": "npx prettier --write ."
   },
+  "main": "src/index.js",
+  "browser": "src/index.js",
+  "module": "dist/index.js",
+  "unpkg": "dist/index.js",
+  "files": [
+    "demo",
+    "src",
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tomayac/joy-con-webhid.git"
@@ -20,13 +33,13 @@
   },
   "homepage": "https://github.com/tomayac/joy-con-webhid#readme",
   "devDependencies": {
-    "http-server": "^0.12.3",
-    "prettier": "^2.1.2",
-    "eslint": "^7.12.1",
+    "eslint": "^7.14.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^6.15.0",
+    "http-server": "^0.12.3",
+    "prettier": "^2.2.0",
     "shx": "^0.3.3",
-    "terser": "^5.3.8"
+    "terser": "^5.5.0"
   },
   "eslintConfig": {
     "parserOptions": {

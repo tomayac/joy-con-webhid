@@ -8,12 +8,12 @@
   position: relative;
 }
 .joycon:nth-child(1) {
-  background: #00b2dc;
+  background-color: #00b2dc;
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
 }
 .joycon:nth-child(2) {
-  background: #ff493e;
+  background-color: #ff493e;
   border-top-right-radius: 50px;
   border-bottom-right-radius: 50px;
 }

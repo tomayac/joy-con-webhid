@@ -1,1 +1,1 @@
-# joy-con-webhid
+# joyconjs

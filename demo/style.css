@@ -1,5 +1,13 @@
 :root {
   color-scheme: dark light;
+  --left-alpha: 0deg;
+  --left-beta: 0deg;
+  --left-gamma: 0deg;
+  --right-alpha: 0deg;
+  --right-beta: 0deg;
+  --right-gamma: 0deg;
+  --left-joy-con-color: #00b2dc;
+  --right-joy-con-color: #ff493e;
 }
 
 html {
@@ -16,14 +24,19 @@ body {
   font-size: 100%;
 }
 
+ol {
+  padding-inline-start: 22px;
+}
+
 footer {
-  position: absolute;
+  position: fixed;
   bottom: 1rem;
+  width: 100%;
   font-size: 0.8rem;
 }
 
 a {
-  color: #ff493e;
+  color: var(--right-joy-con-color);
 }
 
 ul {
@@ -34,8 +47,6 @@ ul {
 .joycon.rumble {
   animation: shake 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 @keyframes shake {
@@ -61,6 +72,11 @@ ul {
   }
 }
 
+#debug {
+  display: none;
+  gap: 50px;
+}
+
 #left.highlight,
 #right.highlight,
 #up.highlight,
@@ -68,10 +84,10 @@ ul {
 #capture.highlight,
 #minus.highlight,
 #joycon-l .highlight {
-  outline: solid 2px #ff493e;
+  outline: solid 2px var(--right-joy-con-color);
 }
 #l.highlight:after {
-  border-left-color: #ff493e;
+  border-left-color: var(--right-joy-con-color);
 }
 
 #x.highlight,
@@ -81,8 +97,28 @@ ul {
 #home.highlight,
 #plus.highlight,
 #joycon-r .highlight {
-  outline: solid 2px #00b2dc;
+  outline: solid 2px;
 }
 #r.highlight:after {
-  border-left-color: #00b2dc;
+  border-left-color: var(--left-joy-con-color);
+}
+
+figure {
+  perspective: 1000px;
+}
+
+#joycon-l {
+  transform-style: preserve-3d;
+  transform: rotateZ(var(--left-alpha)) rotateX(var(--left-beta))
+    rotateY(var(--left-gamma));
+}
+
+#joycon-r {
+  transform-style: preserve-3d;
+  transform: rotateZ(var(--right-alpha)) rotateX(var(--right-beta))
+    rotateY(var(--right-gamma));
+}
+
+[data-z] {
+  transform: rotateX(15deg) rotateY(-30deg);
 }
