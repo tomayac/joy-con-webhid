@@ -1,5 +1,4 @@
-import { connectJoyCon, connectedJoyCons } from '../src/index.js';
-import { JoyConLeft } from '../src/joycon.js';
+import { connectJoyCon, connectedJoyCons, JoyConLeft } from '../src/index.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
 const debugLeft = document.querySelector('#debug-left');
@@ -111,9 +110,6 @@ const visualize = (joyCon, packet) => {
 
 // Joy-Cons may sleep until touched, so attach the listener dynamically.
 setInterval(async () => {
-  if (!connectedJoyCons.size) {
-    return;
-  }
   for (const joyCon of connectedJoyCons.values()) {
     if (joyCon.eventListenerAttached) {
       continue;

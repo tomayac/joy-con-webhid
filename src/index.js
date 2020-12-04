@@ -53,9 +53,7 @@ const connectDevice = async (device) => {
   await joyCon.open();
   await joyCon.enableStandardFullMode();
   await joyCon.enableIMUMode();
-  console.log(await joyCon.requestDeviceInfo());
-  console.log(await joyCon.requestBatteryLevel());
   return joyCon;
 };
 
-export { connectJoyCon, connectedJoyCons };
+export { connectJoyCon, connectedJoyCons, JoyConLeft, JoyConRight };

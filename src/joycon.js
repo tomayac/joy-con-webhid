@@ -49,7 +49,7 @@ class JoyCon extends EventTarget {
    *
    * @memberof JoyCon
    */
-  async requestDeviceInfo() {
+  async getrequestDeviceInfo() {
     const outputReportID = 0x01;
     const subcommand = [0x02];
     const data = [
@@ -82,7 +82,7 @@ class JoyCon extends EventTarget {
    *
    * @memberof JoyCon
    */
-  async requestBatteryLevel() {
+  async getBatteryLevel() {
     const outputReportID = 0x01;
     const subCommand = [0x50];
     const data = [
