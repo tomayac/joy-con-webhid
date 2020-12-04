@@ -6,12 +6,7 @@ sticks, and the device's gyroscope and accelerometer sensors.
 
 ## Demo
 
-<img
-width="800"
-alt="Joy-Con WebHID demo showing two Joy-Cons slightly tilted with one of the analog sticks moved to the right on one Joy-Con and the 'A' button pressed on the other."
-src="https://user-images.githubusercontent.com/145676/101152193-01fc4f80-3623-11eb-8afd-50485f2807c6.png"
-
->
+<img width="800" alt="Joy-Con WebHID demo showing two Joy-Cons slightly tilted with one of the analog sticks moved to the right on one Joy-Con and the 'A' button pressed on the other." src="https://user-images.githubusercontent.com/145676/101152193-01fc4f80-3623-11eb-8afd-50485f2807c6.png">
 
 See the [live demo](https://tomayac.github.io/joy-con-webhid/demo/) of the driver.
 
@@ -71,8 +66,9 @@ setInterval(async () => {
 
 ## Acknowledgements
 
-This project takes heavy inspiration from @wazho's [ns-joycon](https://github.com/wazho/ns-joycon),
-which in turn is based on @dekuNukem's
+This project takes heavy inspiration from [@wazho](https://github.com/wazho)'s
+[ns-joycon](https://github.com/wazho/ns-joycon),
+which in turn is based on [@dekuNukem](https://github.com/dekuNukem)'s
 [Nintendo_Switch_Reverse_Engineering](https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering).
 
 ## License
