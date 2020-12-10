@@ -6,9 +6,9 @@ sticks, and the device's gyroscope and accelerometer sensors.
 
 ## Demo
 
-<img width="800" alt="Joy-Con WebHID demo showing two Joy-Cons slightly tilted with one of the analog sticks moved to the right on one Joy-Con and the 'A' button pressed on the other." src="https://user-images.githubusercontent.com/145676/101152193-01fc4f80-3623-11eb-8afd-50485f2807c6.png">
-
 See the [live demo](https://tomayac.github.io/joy-con-webhid/demo/) of the driver.
+
+<img width="800" alt="Joy-Con WebHID demo showing two Joy-Cons slightly tilted with one of the analog sticks moved to the right on one Joy-Con and the 'A' button pressed on the other." src="https://user-images.githubusercontent.com/145676/101152193-01fc4f80-3623-11eb-8afd-50485f2807c6.png">
 
 ## Installation
 
@@ -21,7 +21,7 @@ npm install --save joy-con-webhid
 In order to test this _locally_, you need to flip the
 `chrome://flags/#enable-experimental-web-platform-features` flag in Chrome.
 
-For using it on your site, register for the
+For using it on your _production site_, register for the
 [WebHID origin trial](https://developers.chrome.com/origintrials/#/register_trial/1074108511127863297),
 then add the obtained token to your site as in
 [this commit](https://github.com/tomayac/joy-con-webhid/commit/a19e541b365305eb440998b3a329989ddb361952).
