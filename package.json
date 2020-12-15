@@ -1,6 +1,6 @@
 {
   "name": "joy-con-webhid",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Joy-Con over WebHID ",
   "scripts": {
     "start": "npx http-server",
@@ -13,11 +13,11 @@
     "prepare": "npm run lint && npm run fix && npm run build",
     "fix": "npx prettier --write ."
   },
-  "main": "dist/index.js",
-  "browser": "dist/index.js",
-  "exports": "dist/index.js",
-  "module": "dist/index.js",
-  "unpkg": "dist/index.js",
+  "main": "./dist/index.js",
+  "browser": "./dist/index.js",
+  "exports": "./dist/index.js",
+  "module": "./dist/index.js",
+  "unpkg": "./dist/index.js",
   "files": [
     "demo",
     "src",
