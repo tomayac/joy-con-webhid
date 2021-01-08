@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npx http-server",
     "clean": "shx rm -rf ./dist && mkdir dist",
-    "lint": "npx eslint . --ext .js,.mjs --fix --ignore-pattern dist/",
+    "lint": "npx eslint . --ext .js,.mjs --fix --ignore-pattern dist/ --ignore-pattern src/madgwick.js",
     "build:index": "npx terser ./src/index.js --toplevel --comments /@license/ --ecma=8 -o ./dist/index.js",
     "build:joycon": "npx terser ./src/joycon.js --toplevel --comments /@license/ --ecma=8 -o ./dist/joycon.js",
     "build:parse": "npx terser ./src/parse.js --toplevel --comments /@license/ --ecma=8 -o ./dist/parse.js",
