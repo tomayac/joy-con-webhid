@@ -76,6 +76,16 @@ setInterval(async () => {
 }, 2000);
 ```
 
+## Why not use the Gamepad API?
+
+The [Gamepad API](https://w3c.github.io/gamepad/)
+supports Joy-Con controllers out-of-the-box,
+but since the API (currently) does not have a concept of orientation,
+the Joy-Cons' accelerometer and gyroscope data cannot be accessed.
+The buttons and analog sticks are fully exposed, though.
+If all you need is this, then by all means
+[go for the Gamepad API](https://web.dev/gamepad/).
+
 ## Acknowledgements
 
 This project takes heavy inspiration from [@wazho](https://github.com/wazho)'s
