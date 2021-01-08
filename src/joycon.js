@@ -49,7 +49,7 @@ class JoyCon extends EventTarget {
    *
    * @memberof JoyCon
    */
-  async getrequestDeviceInfo() {
+  async getRequestDeviceInfo() {
     const outputReportID = 0x01;
     const subcommand = [0x02];
     const data = [
@@ -270,8 +270,16 @@ class JoyCon extends EventTarget {
           const rps = PacketParser.calculateActualGyroscope(
             gyroscopes.map((g) => g.map((v) => v.rps))
           );
+          const dps = PacketParser.calculateActualGyroscope(
+            gyroscopes.map((g) => g.map((v) => v.dps))
+          );
           const acc = PacketParser.calculateActualAccelerometer(
             accelerometers.map((a) => [a.x.acc, a.y.acc, a.z.acc])
+          );
+          const quaternion = PacketParser.toQuaternion(
+            rps,
+            acc,
+            device.productId
           );
 
           packet = {
@@ -280,9 +288,7 @@ class JoyCon extends EventTarget {
             gyroscopes,
             actualAccelerometer: acc,
             actualGyroscope: {
-              dps: PacketParser.calculateActualGyroscope(
-                gyroscopes.map((g) => g.map((v) => v.dps))
-              ),
+              dps: dps,
               rps: rps,
             },
             actualOrientation: PacketParser.toEulerAngles(
@@ -290,6 +296,10 @@ class JoyCon extends EventTarget {
               acc,
               device.productId
             ),
+            actualOrientationQuaternion: PacketParser.toEulerAnglesQuaternion(
+              quaternion
+            ),
+            quaternion: quaternion,
           };
         }
         break;

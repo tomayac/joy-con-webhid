@@ -1,3 +1,9 @@
+import { Madgwick } from './madgwick.js';
+
+const leftMadgwick = new Madgwick(10);
+const rightMadgwick = new Madgwick(10);
+const rad2deg = 180.0 / Math.PI;
+
 /* eslint-disable require-jsdoc */
 
 function baseSum(array, iteratee) {
@@ -126,6 +132,28 @@ export function toEulerAngles(gyroscope, accelerometer, productId) {
         ? ((-1 * (lastValues[productId].gamma * 180)) / Math.PI).toFixed(6)
         : ((lastValues[productId].gamma * 180) / Math.PI).toFixed(6),
   };
+}
+
+export function toEulerAnglesQuaternion(q) {
+  const ww = q.w * q.w;
+  const xx = q.x * q.x;
+  const yy = q.y * q.y;
+  const zz = q.z * q.z;
+  return {
+    alpha: rad2deg * Math.atan2(2 * (q.x * q.y + q.z * q.w), xx - yy - zz + ww),
+    beta: rad2deg * -Math.asin(2 * (q.x * q.z - q.y * q.w)),
+    gamma:
+      rad2deg * Math.atan2(2 * (q.y * q.z + q.x * q.w), -xx - yy + zz + ww),
+  };
+}
+
+export function toQuaternion(gyro, accl, productId) {
+  if (productId === 0x2006) {
+    leftMadgwick.update(gyro.x, gyro.y, gyro.z, accl.x, accl.y, accl.z);
+    return leftMadgwick.getQuaternion();
+  }
+  rightMadgwick.update(gyro.x, gyro.y, gyro.z, accl.x, accl.y, accl.z);
+  return rightMadgwick.getQuaternion();
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "joy-con-webhid",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Joy-Con over WebHID ",
   "scripts": {
     "start": "npx http-server",
@@ -10,7 +10,8 @@
     "build:joycon": "npx terser ./src/joycon.js --toplevel --comments /@license/ --ecma=8 -o ./dist/joycon.js",
     "build:parse": "npx terser ./src/parse.js --toplevel --comments /@license/ --ecma=8 -o ./dist/parse.js",
     "build": "npm run clean && npm run build:index && npm run build:joycon && npm run build:parse",
-    "prepare": "npm run lint && npm run fix && npm run build",
+    "copyDeps": "shx cp ./node_modules/ahrs/Madgwick.js ./src/madgwick.js && shx sed -i 's/module.exports =/export/' ./src/madgwick.js",
+    "prepare": "npm run lint && npm run fix && npm run build && npm run copyDeps",
     "fix": "npx prettier --write ."
   },
   "main": "./dist/index.js",
@@ -34,9 +35,9 @@
   },
   "homepage": "https://github.com/tomayac/joy-con-webhid#readme",
   "devDependencies": {
-    "eslint": "^7.15.0",
+    "eslint": "^7.17.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^7.0.0",
+    "eslint-config-prettier": "^7.1.0",
     "http-server": "^0.12.3",
     "prettier": "^2.2.1",
     "shx": "^0.3.3",
@@ -51,5 +52,8 @@
       "google",
       "prettier"
     ]
+  },
+  "dependencies": {
+    "ahrs": "^1.2.3"
   }
 }
