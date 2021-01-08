@@ -140,10 +140,13 @@ export function toEulerAnglesQuaternion(q) {
   const yy = q.y * q.y;
   const zz = q.z * q.z;
   return {
-    alpha: rad2deg * Math.atan2(2 * (q.x * q.y + q.z * q.w), xx - yy - zz + ww),
-    beta: rad2deg * -Math.asin(2 * (q.x * q.z - q.y * q.w)),
-    gamma:
-      rad2deg * Math.atan2(2 * (q.y * q.z + q.x * q.w), -xx - yy + zz + ww),
+    alpha: (
+      rad2deg * Math.atan2(2 * (q.x * q.y + q.z * q.w), xx - yy - zz + ww)
+    ).toFixed(6),
+    beta: (rad2deg * -Math.asin(2 * (q.x * q.z - q.y * q.w))).toFixed(6),
+    gamma: (
+      rad2deg * Math.atan2(2 * (q.y * q.z + q.x * q.w), -xx - yy + zz + ww)
+    ).toFixed(6),
   };
 }
 
