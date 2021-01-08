@@ -9,7 +9,8 @@
     "build:index": "npx terser ./src/index.js --toplevel --comments /@license/ --ecma=8 -o ./dist/index.js",
     "build:joycon": "npx terser ./src/joycon.js --toplevel --comments /@license/ --ecma=8 -o ./dist/joycon.js",
     "build:parse": "npx terser ./src/parse.js --toplevel --comments /@license/ --ecma=8 -o ./dist/parse.js",
-    "build": "npm run clean && npm run build:index && npm run build:joycon && npm run build:parse",
+    "build:madgwick": "npx terser ./src/madgwick.js --toplevel --comments /@license/ --ecma=8 -o ./dist/madgwick.js",
+    "build": "npm run clean && npm run build:index && npm run build:joycon && npm run build:parse && npm run build:madgwick",
     "copyDeps": "shx cp ./node_modules/ahrs/Madgwick.js ./src/madgwick.js && shx sed -i 's/module.exports =/export/' ./src/madgwick.js",
     "prepare": "npm run lint && npm run fix && npm run build && npm run copyDeps",
     "fix": "npx prettier --write ."
