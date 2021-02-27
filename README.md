@@ -10,6 +10,11 @@ See the [live demo](https://tomayac.github.io/joy-con-webhid/demo/) of the drive
 
 <img width="800" alt="Joy-Con WebHID demo showing two Joy-Cons slightly tilted with one of the analog sticks moved to the right on one Joy-Con and the 'A' button pressed on the other." src="https://user-images.githubusercontent.com/145676/101152193-01fc4f80-3623-11eb-8afd-50485f2807c6.png">
 
+Another demo is [Chrome Dino WebHID](https://github.com/tomayac/chrome-dino-webhid), where you
+can play the Chrome dino game 🦖 over WebHID by jumping with a Joy-Con controller in your pocket.
+
+[![Joy-Con WebHID Chrome dino demo](https://img.youtube.com/vi/HuhQXXgDnCQ/0.jpg)](https://www.youtube.com/watch?v=HuhQXXgDnCQ)
+
 ## Installation
 
 ```bash
