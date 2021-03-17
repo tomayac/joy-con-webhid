@@ -82,6 +82,13 @@ const visualize = (joyCon, packet) => {
       .classList.toggle('highlight', buttons.rightStick);
   }
 
+  for (const button of Object.values(buttons)) {
+    if (button === true) {
+      joyCon.rumble(600, 600, 0.5);
+      break;
+    }
+  }
+
   if (showDebug.checked) {
     const controller = joyCon instanceof JoyConLeft ? debugLeft : debugRight;
     controller.querySelector('pre').textContent =
@@ -120,6 +127,7 @@ setInterval(async () => {
     await joyCon.open();
     await joyCon.enableStandardFullMode();
     await joyCon.enableIMUMode();
+    await joyCon.enableVibration();
     joyCon.addEventListener('hidinput', (event) => {
       visualize(joyCon, event.detail);
     });
