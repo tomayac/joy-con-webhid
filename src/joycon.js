@@ -249,6 +249,69 @@ class JoyCon extends EventTarget {
   }
 
   /**
+   * Send a rumble data to JoyCon.
+   *
+   * @param {number} lowFrequency
+   * @param {number} highFrequency
+   * @param {number} amplitude
+   *
+   * @memberof JoyCon
+   */
+  async rumble(lowFrequency, highFrequency, amplitude) {
+    const outputReportID = 0x10;
+    const data = new Uint8Array(9);
+
+    // Referenced codes below:
+    // https://github.com/Looking-Glass/JoyconLib/blob/master/Packages/com.lookingglass.joyconlib/JoyconLib_scripts/Joycon.cs
+    data[0] = 0x00;
+
+    let lf = clamp(lowFrequency, 40.875885, 626.286133);
+    let hf = clamp(highFrequency, 81.75177, 1252.572266);
+
+    hf = (Math.round(32 * Math.log2(hf * 0.1)) - 0x60) * 4;
+    lf = Math.round(32 * Math.log2(lf * 0.1)) - 0x40;
+
+    const amp = clamp(amplitude, 0, 1);
+
+    let hfAmp;
+    if (amp == 0) {
+      hfAmp = 0;
+    } else if (amp < 0.117) {
+      hfAmp = (Math.log2(amp * 1000) * 32 - 0x60) / (5 - Math.pow(amp, 2)) - 1;
+    } else if (amp < 0.23) {
+      hfAmp = Math.log2(amp * 1000) * 32 - 0x60 - 0x5c;
+    } else {
+      hfAmp = (Math.log2(amp * 1000) * 32 - 0x60) * 2 - 0xf6;
+    }
+
+    let lfAmp = Math.round(hfAmp) * 0.5;
+    const parity = lfAmp % 2;
+    if (parity > 0) {
+      --lfAmp;
+    }
+    lfAmp = lfAmp >> 1;
+    lfAmp += 0x40;
+    if (parity > 0) {
+      lfAmp |= 0x8000;
+    }
+
+    data[1] = hf & 0xff;
+    data[2] = hfAmp + ((hf >>> 8) & 0xff);
+    data[3] = lf + ((lfAmp >>> 8) & 0xff);
+    data[4] += lfAmp & 0xff;
+
+    for (let i = 0; i < 4; i++) {
+      data[5 + i] = data[1 + i];
+    }
+
+    await this.device.sendReport(outputReportID, new Uint8Array(data));
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+  }
+
+  /**
    * Deal with `oninputreport` events.
    *
    * @param {*} event
