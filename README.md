@@ -100,6 +100,8 @@ This project takes heavy inspiration from [@wazho](https://github.com/wazho)'s
 [ns-joycon](https://github.com/wazho/ns-joycon),
 which in turn is based on [@dekuNukem](https://github.com/dekuNukem)'s
 [Nintendo_Switch_Reverse_Engineering](https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering).
+The rumble code was contributed by
+[@baku89](https://github.com/baku89).
 
 ## License
 
