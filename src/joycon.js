@@ -203,6 +203,52 @@ class JoyCon extends EventTarget {
   }
 
   /**
+   * Enables vibration.
+   *
+   * @memberof JoyCon
+   */
+  async enableVibration() {
+    const outputReportID = 0x01;
+    const subcommand = [0x48, 0x01];
+    const data = [
+      0x00,
+      0x00,
+      0x01,
+      0x40,
+      0x40,
+      0x00,
+      0x01,
+      0x40,
+      0x40,
+      ...subcommand,
+    ];
+    await this.device.sendReport(outputReportID, new Uint8Array(data));
+  }
+
+  /**
+   * Disables vibration.
+   *
+   * @memberof JoyCon
+   */
+  async disableVibration() {
+    const outputReportID = 0x01;
+    const subcommand = [0x48, 0x00];
+    const data = [
+      0x00,
+      0x00,
+      0x01,
+      0x40,
+      0x40,
+      0x00,
+      0x01,
+      0x40,
+      0x40,
+      ...subcommand,
+    ];
+    await this.device.sendReport(outputReportID, new Uint8Array(data));
+  }
+
+  /**
    * Deal with `oninputreport` events.
    *
    * @param {*} event
