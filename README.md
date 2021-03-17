@@ -21,18 +21,6 @@ can play the Chrome dino game 🦖 over WebHID by jumping with a Joy-Con control
 npm install --save joy-con-webhid
 ```
 
-## Requirements
-
-In order to test this _locally_, you need to flip the
-`chrome://flags/#enable-experimental-web-platform-features` flag in Chrome.
-
-For using it on your _production site_, register for the
-[WebHID origin trial](https://developers.chrome.com/origintrials/#/register_trial/1074108511127863297),
-then add the obtained token to your site as in
-[this commit](https://github.com/tomayac/joy-con-webhid/commit/a19e541b365305eb440998b3a329989ddb361952).
-To learn more about origin trials, you can read
-[this article](https://web.dev/origin-trials/).
-
 ## Usage
 
 Make sure you have a pairing button on your page.
