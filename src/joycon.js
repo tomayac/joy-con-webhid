@@ -249,7 +249,7 @@ class JoyCon extends EventTarget {
   }
 
   /**
-   * Send a rumble data to JoyCon.
+   * Send a rumble signal to Joy-Con.
    *
    * @param {number} lowFrequency
    * @param {number} highFrequency
@@ -258,6 +258,9 @@ class JoyCon extends EventTarget {
    * @memberof JoyCon
    */
   async rumble(lowFrequency, highFrequency, amplitude) {
+    const clamp = (value, min, max) => {
+      return Math.min(Math.max(value, min), max);
+    };
     const outputReportID = 0x10;
     const data = new Uint8Array(9);
 
@@ -305,10 +308,6 @@ class JoyCon extends EventTarget {
     }
 
     await this.device.sendReport(outputReportID, new Uint8Array(data));
-
-    function clamp(value, min, max) {
-      return Math.min(Math.max(value, min), max);
-    }
   }
 
   /**
