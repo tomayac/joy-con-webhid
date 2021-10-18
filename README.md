@@ -21,6 +21,9 @@ can play the Chrome dino game 🦖 over WebHID by jumping with a Joy-Con control
 npm install --save joy-con-webhid
 ```
 
+(For **Linux**, see this [comment on Issue #3](https://github.com/tomayac/joy-con-webhid/issues/3#issuecomment-944427792)
+for required pre-steps.)
+
 ## Usage
 
 Make sure you have a pairing button on your page.
