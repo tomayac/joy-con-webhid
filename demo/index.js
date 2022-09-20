@@ -1,4 +1,4 @@
-import { connectJoyCon, connectedJoyCons, JoyConLeft } from '../src/index.js';
+import { connectJoyCon, connectedJoyCons, JoyConLeft, JoyConRight, HVCController } from '../src/index.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
 const debugLeft = document.querySelector('#debug-left');
@@ -30,8 +30,47 @@ const visualize = (joyCon, packet) => {
     rootStyle.setProperty('--right-gamma', `${orientation.gamma}deg`);
   }
 
-  if (joyCon instanceof JoyConLeft) {
-    const joystick = packet.analogStickLeft;
+  if (joyCon instanceof HVCController) {
+    // from left
+    document.querySelector('#up').classList.toggle('highlight', buttons.up);
+    document.querySelector('#down').classList.toggle('highlight', buttons.down);
+    document.querySelector('#left').classList.toggle('highlight', buttons.left);
+    document
+      .querySelector('#right')
+      .classList.toggle('highlight', buttons.right);
+    document
+      .querySelector('#capture')
+      .classList.toggle('highlight', buttons.capture);
+    document
+      .querySelector('#l')
+      .classList.toggle('highlight', buttons.l || buttons.zl);
+    document
+      .querySelector('#l')
+      .classList.toggle('highlight', buttons.l || buttons.zl);
+    document
+      .querySelector('#minus')
+      .classList.toggle('highlight', buttons.minus);
+    document
+      .querySelector('#joystick-left')
+      .classList.toggle('highlight', buttons.leftStick);
+    // from right
+    document.querySelector('#a').classList.toggle('highlight', buttons.a);
+    document.querySelector('#b').classList.toggle('highlight', buttons.b);
+    document.querySelector('#x').classList.toggle('highlight', buttons.x);
+    document.querySelector('#y').classList.toggle('highlight', buttons.y);
+    document.querySelector('#home').classList.toggle('highlight', buttons.home);
+    document
+      .querySelector('#r')
+      .classList.toggle('highlight', buttons.r || buttons.zr);
+    document
+      .querySelector('#r')
+      .classList.toggle('highlight', buttons.r || buttons.zr);
+    document.querySelector('#plus').classList.toggle('highlight', buttons.plus);
+    document
+      .querySelector('#joystick-right')
+      .classList.toggle('highlight', buttons.rightStick);
+  
+  } else if (joyCon instanceof JoyConLeft) {
     const joystickMultiplier = 10;
     document.querySelector('#joystick-left').style.transform = `translateX(${
       joystick.horizontal * joystickMultiplier
@@ -58,7 +97,7 @@ const visualize = (joyCon, packet) => {
     document
       .querySelector('#joystick-left')
       .classList.toggle('highlight', buttons.leftStick);
-  } else {
+  } else if (joyCon instanceof JoyConRight) {
     const joystick = packet.analogStickRight;
     const joystickMultiplier = 10;
     document.querySelector('#joystick-right').style.transform = `translateX(${

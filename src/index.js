@@ -1,4 +1,5 @@
 import { JoyConLeft, JoyConRight } from './joycon.js';
+import { HVCController } from "./HVCController.js";
 
 const connectedJoyCons = new Map();
 
@@ -48,7 +49,11 @@ const connectDevice = async (device) => {
   if (device.productId === 0x2006) {
     joyCon = new JoyConLeft(device);
   } else if (device.productId === 0x2007) {
-    joyCon = new JoyConRight(device);
+    if (device.productName.startsWith("HVC Controller ")) {
+      joyCon = new HVCController(device);
+    } else {
+      joyCon = new JoyConRight(device);
+    }
   }
   await joyCon.open();
   await joyCon.enableStandardFullMode();
@@ -56,4 +61,4 @@ const connectDevice = async (device) => {
   return joyCon;
 };
 
-export { connectJoyCon, connectedJoyCons, JoyConLeft, JoyConRight };
+export { connectJoyCon, connectedJoyCons, JoyConLeft, JoyConRight, HVCController };
