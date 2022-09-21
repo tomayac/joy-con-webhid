@@ -1,6 +1,6 @@
 {
   "name": "joy-con-webhid",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Joy-Con over WebHID ",
   "scripts": {
     "start": "npx http-server",
