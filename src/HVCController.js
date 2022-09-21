@@ -1,4 +1,4 @@
-import { JoyConRight } from "./joycon.js";
+import { JoyConRight } from './joycon.js';
 
 /**
  *
@@ -8,7 +8,7 @@ import { JoyConRight } from "./joycon.js";
  */
 class HVCController extends JoyConRight {
   /**
-   *Creates an instance of HVCController.
+   * Creates an instance of HVCController.
    * @param {HIDDevice} device
    * @memberof HVCController
    */

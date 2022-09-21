@@ -1,5 +1,5 @@
 import { JoyConLeft, JoyConRight } from './joycon.js';
-import { HVCController } from "./HVCController.js";
+import { HVCController } from './HVCController.js';
 
 const connectedJoyCons = new Map();
 
@@ -49,7 +49,7 @@ const connectDevice = async (device) => {
   if (device.productId === 0x2006) {
     joyCon = new JoyConLeft(device);
   } else if (device.productId === 0x2007) {
-    if (device.productName.startsWith("HVC Controller ")) {
+    if (device.productName.startsWith('HVC Controller ')) {
       joyCon = new HVCController(device);
     } else {
       joyCon = new JoyConRight(device);
@@ -61,4 +61,10 @@ const connectDevice = async (device) => {
   return joyCon;
 };
 
-export { connectJoyCon, connectedJoyCons, JoyConLeft, JoyConRight, HVCController };
+export {
+  connectJoyCon,
+  connectedJoyCons,
+  JoyConLeft,
+  JoyConRight,
+  HVCController,
+};

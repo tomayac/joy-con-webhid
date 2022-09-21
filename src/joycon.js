@@ -22,8 +22,8 @@ const concatTypedArrays = (a, b) => {
  */
 class JoyCon extends EventTarget {
   /**
-   *Creates an instance of JoyCon.
-
+   * Creates an instance of JoyCon.
+   *
    * @param {HIDDevice} device
    * @memberof JoyCon
    */
@@ -404,9 +404,8 @@ class JoyCon extends EventTarget {
               acc,
               device.productId
             ),
-            actualOrientationQuaternion: PacketParser.toEulerAnglesQuaternion(
-              quaternion
-            ),
+            actualOrientationQuaternion:
+              PacketParser.toEulerAnglesQuaternion(quaternion),
             quaternion: quaternion,
           };
         }
@@ -490,7 +489,8 @@ class JoyConLeft extends JoyCon {
  */
 class JoyConRight extends JoyCon {
   /**
-   *Creates an instance of JoyConRight.
+   * Creates an instance of JoyConRight.
+   *
    * @param {HIDDevice} device
    * @memberof JoyConRight
    */
@@ -499,7 +499,7 @@ class JoyConRight extends JoyCon {
   }
 
   /**
-   *
+   * Deals with receiving input events.
    *
    * @param {*} packet
    * @memberof JoyConRight

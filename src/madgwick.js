@@ -1,16 +1,18 @@
 //= ====================================================================================================
-// MadgwickAHRS.c
+// Based on MadgwickAHRS.c
 //= ====================================================================================================
 //
 // Implementation of Madgwick's IMU and AHRS algorithms.
 // See: http://www.x-io.co.uk/node/8#open_source_ahrs_and_imu_algorithms
 //
-// Date         Author          Notes
-// 29/09/2011   SOH Madgwick    Initial release
-// 02/10/2011   SOH Madgwick    Optimised for reduced CPU load
-// 19/02/2012   SOH Madgwick    Magnetometer measurement is normalised
-//
 //= ====================================================================================================
+
+/**
+ * @typedef {Object} EulerAngles
+ * @property {number} heading - The direction of the object.  Angle around Z-axis.
+ * @property {number} pitch - The forward/backward attitude of the object.  Angle around Y-axis.
+ * @property {number} roll - The sideways angle of the object.  Angle around X-axis.
+ */
 
 /* eslint-disable one-var-declaration-per-line */
 
@@ -28,7 +30,7 @@ export function Madgwick(sampleInterval, options) {
 
   options = options || {};
   const sampleFreq = 1000 / sampleInterval; // sample frequency in Hz
-  let beta = options.beta || 1.0; // 2 * proportional gain - lower numbers are smoother, but take longer to get to correct attitude.
+  let beta = options.beta || 0.4; // 2 * proportional gain - lower numbers are smoother, but take longer to get to correct attitude.
   let initalised = options.doInitialisation === true ? false : true;
 
   //---------------------------------------------------------------------------------------------------
@@ -44,6 +46,14 @@ export function Madgwick(sampleInterval, options) {
 
   //---------------------------------------------------------------------------------------------------
   // IMU algorithm update
+  /**
+   * @param {number} gx - gryo x
+   * @param {number} gy - gyro y
+   * @param {number} gz - gyro z
+   * @param {number} ax - accel x
+   * @param {number} ay - accel y
+   * @param {number} az - accel z
+   */
   function madgwickAHRSUpdateIMU(gx, gy, gz, ax, ay, az) {
     let recipNorm;
     let s0, s1, s2, s3;
@@ -111,26 +121,109 @@ export function Madgwick(sampleInterval, options) {
     q3 *= recipNorm;
   }
 
-  //---------------------------------------------------------------------------------------------------
-  // Brute force the initialisation of the q values
-  function doBruteForceInitialisation(ax, ay, az, mx, my, mz) {
+  function cross_product(ax, ay, az, bx, by, bz) {
+    return {
+      x: ay * bz - az * by,
+      y: az * bx - ax * bz,
+      z: ax * by - ay * bx,
+    };
+  }
+
+  /**
+   * @param {number} ax - accel x
+   * @param {number} ay - accel y
+   * @param {number} az - accel z
+   * @param {number} mx - mag x
+   * @param {number} my - mag y
+   * @param {number} mz - mag z
+   * @returns {EulerAngles} - The Euler angles, in radians.
+   */
+  function eulerAnglesFromImuRad(ax, ay, az, mx, my, mz) {
+    const pitch = -Math.atan2(ax, Math.sqrt(ay * ay + az * az));
+
+    const tmp1 = cross_product(ax, ay, az, 1.0, 0.0, 0.0);
+    const tmp2 = cross_product(1.0, 0.0, 0.0, tmp1.x, tmp1.y, tmp1.z);
+    const roll = Math.atan2(tmp2.y, tmp2.z);
+
+    const cr = Math.cos(roll);
+    const sp = Math.sin(pitch);
+    const sr = Math.sin(roll);
+    const yh = my * cr - mz * sr;
+    const xh = mx * Math.cos(pitch) + my * sr * sp + mz * cr * sp;
+
+    const heading = -Math.atan2(yh, xh);
+
+    return {
+      heading,
+      pitch,
+      roll,
+    };
+  }
+
+  // Pinched from here: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+
+  function toQuaternion(eulerAngles) {
+    const cy = Math.cos(eulerAngles.heading * 0.5);
+    const sy = Math.sin(eulerAngles.heading * 0.5);
+    const cp = Math.cos(eulerAngles.pitch * 0.5);
+    const sp = Math.sin(eulerAngles.pitch * 0.5);
+    const cr = Math.cos(eulerAngles.roll * 0.5);
+    const sr = Math.sin(eulerAngles.roll * 0.5);
+
+    return {
+      w: cr * cp * cy + sr * sp * sy,
+      x: sr * cp * cy - cr * sp * sy,
+      y: cr * sp * cy + sr * cp * sy,
+      z: cr * cp * sy - sr * sp * cy,
+    };
+  }
+
+  /**
+   * Initalise the internal quaternion values.  This function only needs to be
+   * called once at the beginning.  The attitude will be set by the accelometer
+   * and the heading by the magnetometer.
+   *
+   * @param {number} ax - accel x
+   * @param {number} ay - accel y
+   * @param {number} az - accel z
+   * @param {number} mx - mag x
+   * @param {number} my - mag y
+   * @param {number} mz - mag z
+   */
+  function init(ax, ay, az, mx, my, mz) {
+    const ea = eulerAnglesFromImuRad(ax, ay, az, mx, my, mz);
+    const iq = toQuaternion(ea);
+
+    // Normalise quaternion
+    const recipNorm = (iq.w * iq.w + iq.x * iq.x + iq.y * iq.y + iq.z * iq.z) ** -0.5;
+    q0 = iq.w * recipNorm;
+    q1 = iq.x * recipNorm;
+    q2 = iq.y * recipNorm;
+    q3 = iq.z * recipNorm;
+
     initalised = true;
-    const betaOrig = beta;
-    beta = 0.4;
-    for (let i = 0; i <= 9; i += 1) {
-      madgwickAHRSUpdate(0.0, 0.0, 0.0, ax, ay, az, mx, my, mz, 1.0);
-    }
-    beta = betaOrig;
   }
 
   //---------------------------------------------------------------------------------------------------
   // AHRS algorithm update
 
+  /**
+   * @param {number} gx - gryo x
+   * @param {number} gy - gyro y
+   * @param {number} gz - gyro z
+   * @param {number} ax - accel x
+   * @param {number} ay - accel y
+   * @param {number} az - accel z
+   * @param {number} mx - magetometer x
+   * @param {number} my - magetometer y
+   * @param {number} mz - magetometer z
+   * @param {number} deltaTimeSec
+   */
   function madgwickAHRSUpdate(gx, gy, gz, ax, ay, az, mx, my, mz, deltaTimeSec) {
     recipSampleFreq = deltaTimeSec || recipSampleFreq;
 
     if (!initalised) {
-      doBruteForceInitialisation(ax, ay, az, mx, my, mz);
+      init(ax, ay, az, mx, my, mz);
     }
 
     let recipNorm;
@@ -252,6 +345,7 @@ export function Madgwick(sampleInterval, options) {
 
   return {
     update: madgwickAHRSUpdate,
+    init,
     getQuaternion() {
       return {
         w: q0,

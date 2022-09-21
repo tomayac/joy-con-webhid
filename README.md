@@ -93,6 +93,7 @@ which in turn is based on [@dekuNukem](https://github.com/dekuNukem)'s
 [Nintendo_Switch_Reverse_Engineering](https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering).
 The rumble code was contributed by
 [@baku89](https://github.com/baku89).
+The [HVC-Controller](https://twitter.com/taisukef/status/1572349705828569092) code was added by [@taisukef](https://github.com/taisukef).
 
 ## License
 

@@ -1,4 +1,10 @@
-import { connectJoyCon, connectedJoyCons, JoyConLeft, JoyConRight, HVCController } from '../src/index.js';
+import {
+  connectJoyCon,
+  connectedJoyCons,
+  JoyConLeft,
+  JoyConRight,
+  HVCController,
+} from '../src/index.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
 const debugLeft = document.querySelector('#debug-left');
@@ -31,7 +37,7 @@ const visualize = (joyCon, packet) => {
   }
 
   if (joyCon instanceof HVCController) {
-    // from left
+    // From left.
     document.querySelector('#up').classList.toggle('highlight', buttons.up);
     document.querySelector('#down').classList.toggle('highlight', buttons.down);
     document.querySelector('#left').classList.toggle('highlight', buttons.left);
@@ -53,7 +59,7 @@ const visualize = (joyCon, packet) => {
     document
       .querySelector('#joystick-left')
       .classList.toggle('highlight', buttons.leftStick);
-    // from right
+    // From right.
     document.querySelector('#a').classList.toggle('highlight', buttons.a);
     document.querySelector('#b').classList.toggle('highlight', buttons.b);
     document.querySelector('#x').classList.toggle('highlight', buttons.x);
@@ -69,7 +75,6 @@ const visualize = (joyCon, packet) => {
     document
       .querySelector('#joystick-right')
       .classList.toggle('highlight', buttons.rightStick);
-  
   } else if (joyCon instanceof JoyConLeft) {
     const joystickMultiplier = 10;
     document.querySelector('#joystick-left').style.transform = `translateX(${
