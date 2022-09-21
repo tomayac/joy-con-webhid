@@ -76,6 +76,7 @@ const visualize = (joyCon, packet) => {
       .querySelector('#joystick-right')
       .classList.toggle('highlight', buttons.rightStick);
   } else if (joyCon instanceof JoyConLeft) {
+    const joystick = packet.analogStickLeft;
     const joystickMultiplier = 10;
     document.querySelector('#joystick-left').style.transform = `translateX(${
       joystick.horizontal * joystickMultiplier
