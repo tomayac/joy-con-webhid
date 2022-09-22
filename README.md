@@ -94,6 +94,7 @@ which in turn is based on [@dekuNukem](https://github.com/dekuNukem)'s
 The rumble code was contributed by
 [@baku89](https://github.com/baku89).
 The [HVC-Controller](https://twitter.com/taisukef/status/1572349705828569092) code was added by [@taisukef](https://github.com/taisukef).
+The [Ring-Con](https://en.wikipedia.org/wiki/Ring_Fit_Adventure) code from [@mascii](https://github.com/mascii/demo-of-ring-con-with-web-hid).
 
 ## License
 
