@@ -7,6 +7,7 @@ import {
 } from '../src/index.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
+const connectButtonRingCon = document.querySelector('#connect-ring-con');
 const debugLeft = document.querySelector('#debug-left');
 const debugRight = document.querySelector('#debug-right');
 const showDebug = document.querySelector('#show-debug');
@@ -24,6 +25,7 @@ const visualize = (joyCon, packet) => {
     actualGyroscope: gyroscope,
     actualOrientation: orientation,
     actualOrientationQuaternion: orientationQuaternion,
+    ringCon: ringCon,
   } = packet;
 
   if (joyCon instanceof JoyConLeft) {
@@ -125,6 +127,8 @@ const visualize = (joyCon, packet) => {
     document
       .querySelector('#joystick-right')
       .classList.toggle('highlight', buttons.rightStick);
+
+    document.querySelector('#rc-st').value = ringCon.strain;
   }
 
   for (const button of Object.values(buttons)) {
@@ -177,6 +181,8 @@ setInterval(async () => {
       visualize(joyCon, event.detail);
     });
     joyCon.eventListenerAttached = true;
+
+    connectButtonRingCon.onclick = async () => await joyCon.enableRingCon();
   }
 }, 2000);
 

@@ -545,3 +545,12 @@ export function calculateActualGyroscope(gyroscopes) {
     z: actualGyroscopes[2],
   };
 }
+
+export function parseRingCon(rawData, data) {
+  const ringcon = {
+    _raw: rawData.slice(38, 2),
+    _hex: data.slice(38, 2),
+    strain: new DataView(rawData.buffer, 39, 2).getInt16(0, true),
+  };
+  return ringcon;
+}
