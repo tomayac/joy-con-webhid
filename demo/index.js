@@ -188,11 +188,11 @@ setInterval(async () => {
     if (joyCon.eventListenerAttached) {
       continue;
     }
+    joyCon.eventListenerAttached = true;
     await joyCon.enableVibration();
     joyCon.addEventListener('hidinput', (event) => {
       visualize(joyCon, event.detail);
     });
-    joyCon.eventListenerAttached = true;
 
     connectButtonRingCon.onclick = async () => await joyCon.enableRingCon();
   }
