@@ -31,6 +31,12 @@ class JoyCon extends EventTarget {
   constructor(device) {
     super();
     this.device = device;
+    this.lastValues = {
+      timestamp: null,
+      alpha: 0,
+      beta: 0,
+      gamma: 0,
+    };
   }
 
   /**
@@ -431,6 +437,7 @@ class JoyCon extends EventTarget {
               rps: rps,
             },
             actualOrientation: PacketParser.toEulerAngles(
+              this.lastValues,
               rps,
               acc,
               device.productId
