@@ -2,6 +2,7 @@ import { JoyConLeft, JoyConRight, GeneralController } from './joycon.js';
 
 const connectedJoyCons = new Map();
 const devices = [];
+
 const getDeviceID = (device) => {
   const n = devices.indexOf(device);
   if (n >= 0) {
