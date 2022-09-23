@@ -551,4 +551,32 @@ class JoyConRight extends JoyCon {
   }
 }
 
-export { JoyConLeft, JoyConRight };
+/**
+ *
+ *
+ * @class GeneralController
+ * @extends {JoyCon}
+ */
+class GeneralController extends JoyCon {
+  /**
+   * Creates an instance of GeneralController.
+   *
+   * @param {HIDDevice} device
+   * @memberof GeneralController
+   */
+  constructor(device) {
+    super(device);
+  }
+
+  /**
+   *
+   *
+   * @param {*} packet
+   * @memberof GeneralController
+   */
+   _receiveInputEvent(packet) {
+    this.dispatchEvent(new CustomEvent('hidinput', { detail: packet }));
+  }
+}
+
+export { GeneralController, JoyConLeft, JoyConRight };
