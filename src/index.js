@@ -17,6 +17,7 @@ const addDevice = async (device) => {
   console.log(`HID connected: ${id} ${device.productName}`);
   connectedJoyCons.set(id, await connectDevice(device));
 };
+
 const removeDevice = async (device) => {
   const id = getDeviceID(device);
   console.log(`HID disconnected: ${id} ${device.productName}`);
