@@ -1,5 +1,4 @@
-import { JoyConLeft, JoyConRight } from './joycon.js';
-import { HVCController } from './HVCController.js';
+import { JoyConLeft, JoyConRight, GeneralController } from './joycon.js';
 
 const connectedJoyCons = new Map();
 
@@ -21,8 +20,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 const connectJoyCon = async () => {
-  // Filter on devices with the Nintendo Switch Joy-Con USB Vendor/Product IDs.
+  // Filter on devices with the Nintendo Vendor ID.
   const filters = [
+    {
+      vendorId: 0x057e, // Nintendo Co., Ltd
+    },
+  ];
+  /*
+  // Filter on devices with the Nintendo Switch Joy-Con USB Vendor/Product IDs.
+  const filters = {
     {
       vendorId: 0x057e, // Nintendo Co., Ltd
       productId: 0x2006, // Joy-Con Left
@@ -31,7 +37,20 @@ const connectJoyCon = async () => {
       vendorId: 0x057e, // Nintendo Co., Ltd
       productId: 0x2007, // Joy-Con Right
     },
+    {
+      vendorId: 0x057e, // Nintendo Co., Ltd
+      productId: 0x2017, // SNES Controller, MD/Gen Control Pad
+    },
+    {
+      vendorId: 0x057e, // Nintendo Co., Ltd
+      productId: 0x2009, // ProCon
+    },
+    {
+      vendorId: 0x057e, // Nintendo Co., Ltd
+      productId: 0x2019, // N64 Controller
+    },
   ];
+  */
   // Prompt user to select a Joy-Con device.
   try {
     const [device] = await navigator.hid.requestDevice({ filters });
@@ -49,11 +68,13 @@ const connectDevice = async (device) => {
   if (device.productId === 0x2006) {
     joyCon = new JoyConLeft(device);
   } else if (device.productId === 0x2007) {
-    if (device.productName.startsWith('HVC Controller ')) {
-      joyCon = new HVCController(device);
-    } else {
+    if (device.productName.startsWith('Joy-Con (R)')) {
       joyCon = new JoyConRight(device);
     }
+  }
+  if (!joyCon) {
+    //console.log(device.productId.toString(16), device.productName);
+    joyCon = new GeneralController(device); // for other controllers
   }
   await joyCon.open();
   await joyCon.enableStandardFullMode();
@@ -66,5 +87,5 @@ export {
   connectedJoyCons,
   JoyConLeft,
   JoyConRight,
-  HVCController,
+  GeneralController,
 };
