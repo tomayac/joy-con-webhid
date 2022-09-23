@@ -3,7 +3,7 @@ import {
   connectedJoyCons,
   JoyConLeft,
   JoyConRight,
-  HVCController,
+  GeneralController,
 } from '../src/index.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
@@ -32,13 +32,13 @@ const visualize = (joyCon, packet) => {
     rootStyle.setProperty('--left-alpha', `${orientation.alpha}deg`);
     rootStyle.setProperty('--left-beta', `${orientation.beta}deg`);
     rootStyle.setProperty('--left-gamma', `${orientation.gamma}deg`);
-  } else {
+  } else if (joyCon instanceof JoyConRight) {
     rootStyle.setProperty('--right-alpha', `${orientation.alpha}deg`);
     rootStyle.setProperty('--right-beta', `${orientation.beta}deg`);
     rootStyle.setProperty('--right-gamma', `${orientation.gamma}deg`);
   }
 
-  if (joyCon instanceof HVCController) {
+  if (joyCon instanceof GeneralController) {
     // From left.
     document.querySelector('#up').classList.toggle('highlight', buttons.up);
     document.querySelector('#down').classList.toggle('highlight', buttons.down);
@@ -77,6 +77,13 @@ const visualize = (joyCon, packet) => {
     document
       .querySelector('#joystick-right')
       .classList.toggle('highlight', buttons.rightStick);
+
+    // for N64Controller
+    const joystick = packet.analogStickLeft;
+    const joystickMultiplier = 10;
+    document.querySelector('#joystick-left').style.transform = `translateX(${
+      joystick.horizontal * joystickMultiplier
+    }px) translateY(${joystick.vertical * joystickMultiplier}px)`;
   } else if (joyCon instanceof JoyConLeft) {
     const joystick = packet.analogStickLeft;
     const joystickMultiplier = 10;
@@ -129,13 +136,6 @@ const visualize = (joyCon, packet) => {
       .classList.toggle('highlight', buttons.rightStick);
 
     document.querySelector('#rc-st').value = ringCon.strain;
-  }
-
-  for (const button of Object.values(buttons)) {
-    if (button === true) {
-      joyCon.rumble(600, 600, 0.5);
-      break;
-    }
   }
 
   if (showDebug.checked) {
