@@ -58,38 +58,6 @@ const ControllerType = {
   0x3: 'Pro Controller',
 };
 
-const lastValues = {
-  8198: {
-    timestamp: null,
-    alpha: 0,
-    beta: 0,
-    gamma: 0,
-  },
-  8199: {
-    timestamp: null,
-    alpha: 0,
-    beta: 0,
-    gamma: 0,
-  },
-  0x2009: {
-    timestamp: null,
-    alpha: 0,
-    beta: 0,
-    gamma: 0,
-  },
-  0x2017: {
-    timestamp: null,
-    alpha: 0,
-    beta: 0,
-    gamma: 0,
-  },
-  0x2019: {
-    timestamp: null,
-    alpha: 0,
-    beta: 0,
-    gamma: 0,
-  }
-};
 const bias = 0.75;
 const zeroBias = 0.0125;
 
@@ -107,12 +75,12 @@ const scale = Math.PI / 2;
  * @param {*} productId
  * @return {Object}
  */
-export function toEulerAngles(gyroscope, accelerometer, productId) {
+export function toEulerAngles(lastValues, gyroscope, accelerometer, productId) {
   const now = Date.now();
-  const dt = lastValues[productId].timestamp
-    ? (now - lastValues[productId].timestamp) / 1000
+  const dt = lastValues.timestamp
+    ? (now - lastValues.timestamp) / 1000
     : 0;
-  lastValues[productId].timestamp = now;
+  lastValues.timestamp = now;
 
   // Treat the acceleration vector as an orientation vector by normalizing it.
   // Keep in mind that if the device is flipped, the vector will just be
@@ -122,14 +90,14 @@ export function toEulerAngles(gyroscope, accelerometer, productId) {
     accelerometer.x ** 2 + accelerometer.y ** 2 + accelerometer.z ** 2
   );
 
-  lastValues[productId].alpha =
-    (1 - zeroBias) * (lastValues[productId].alpha + gyroscope.z * dt);
+  lastValues.alpha =
+    (1 - zeroBias) * (lastValues.alpha + gyroscope.z * dt);
   if (norm !== 0) {
-    lastValues[productId].beta =
-      bias * (lastValues[productId].beta + gyroscope.x * dt) +
+    lastValues.beta =
+      bias * (lastValues.beta + gyroscope.x * dt) +
       (1.0 - bias) * ((accelerometer.x * scale) / norm);
-    lastValues[productId].gamma =
-      bias * (lastValues[productId].gamma + gyroscope.y * dt) +
+    lastValues.gamma =
+      bias * (lastValues.gamma + gyroscope.y * dt) +
       (1.0 - bias) * ((accelerometer.y * -scale) / norm);
   }
   return {
@@ -137,18 +105,18 @@ export function toEulerAngles(gyroscope, accelerometer, productId) {
       // ToDo: I could only get this to work with a magic multiplier (430).
       productId === 0x2006
         ? (
-            (((-1 * (lastValues[productId].alpha * 180)) / Math.PI) * 430) %
+            (((-1 * (lastValues.alpha * 180)) / Math.PI) * 430) %
             90
           ).toFixed(6)
         : (
-            (((lastValues[productId].alpha * 180) / Math.PI) * 430) %
+            (((lastValues.alpha * 180) / Math.PI) * 430) %
             360
           ).toFixed(6),
-    beta: ((-1 * (lastValues[productId].beta * 180)) / Math.PI).toFixed(6),
+    beta: ((-1 * (lastValues.beta * 180)) / Math.PI).toFixed(6),
     gamma:
       productId === 0x2006
-        ? ((-1 * (lastValues[productId].gamma * 180)) / Math.PI).toFixed(6)
-        : ((lastValues[productId].gamma * 180) / Math.PI).toFixed(6),
+        ? ((-1 * (lastValues.gamma * 180)) / Math.PI).toFixed(6)
+        : ((lastValues.gamma * 180) / Math.PI).toFixed(6),
   };
 }
 
