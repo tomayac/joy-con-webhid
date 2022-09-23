@@ -348,6 +348,51 @@ class JoyCon extends EventTarget {
   }
 
   /**
+   * set LED state.
+   *
+   * @memberof JoyCon
+   */
+   async setLEDState(n) {
+    const NO_RUMBLE = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+    const subcommand = [0x30, n];
+    await this.device.sendReport(0x01, new Uint8Array([...NO_RUMBLE, 0, ...subcommand]));
+  }
+
+  /**
+   * set LED.
+   *
+   * @memberof JoyCon
+   * @param n position(0-3)
+   */
+   async setLED(n) {
+    this.ledstate |= 1 << n;
+    await this.setLEDState(this.ledstate);
+  }
+
+  /**
+   * reset LED.
+   *
+   * @memberof JoyCon
+   * @param n position(0-3)
+   */
+   async resetLED(n) {
+    this.ledstate &= ~((1 << n) | (1 << (4 + n)));
+    await this.setLEDState(this.ledstate);
+  }
+
+  /**
+   * blink LED.
+   *
+   * @memberof JoyCon
+   * @param n position(0-3)
+   */
+   async blinkLED(n) {
+    this.ledstate &= ~(1 << n);
+    this.ledstate |= 1 << (4 + n);
+    await this.setLEDState(this.ledstate);
+  }
+
+  /**
    * Deal with `oninputreport` events.
    *
    * @param {*} event
