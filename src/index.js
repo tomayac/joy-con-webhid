@@ -11,6 +11,7 @@ const getDeviceID = (device) => {
   devices.push(device);
   return devices.length - 1;
 };
+
 const addDevice = async (device) => {
   const id = getDeviceID(device);
   console.log(`HID connected: ${id} ${device.productName}`);
