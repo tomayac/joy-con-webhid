@@ -188,9 +188,6 @@ setInterval(async () => {
     if (joyCon.eventListenerAttached) {
       continue;
     }
-    await joyCon.open();
-    await joyCon.enableStandardFullMode();
-    await joyCon.enableIMUMode();
     await joyCon.enableVibration();
     joyCon.addEventListener('hidinput', (event) => {
       visualize(joyCon, event.detail);
