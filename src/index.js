@@ -1,21 +1,41 @@
 import { JoyConLeft, JoyConRight, GeneralController } from './joycon.js';
 
 const connectedJoyCons = new Map();
+const devices = [];
+
+const getDeviceID = (device) => {
+  const n = devices.indexOf(device);
+  if (n >= 0) {
+    return n;
+  }
+  devices.push(device);
+  return devices.length - 1;
+};
+
+const addDevice = async (device) => {
+  const id = getDeviceID(device);
+  console.log(`HID connected: ${id} ${device.productName}`);
+  connectedJoyCons.set(id, await connectDevice(device));
+};
+
+const removeDevice = async (device) => {
+  const id = getDeviceID(device);
+  console.log(`HID disconnected: ${id} ${device.productName}`);
+  connectedJoyCons.delete(id);
+};
 
 navigator.hid.addEventListener('connect', async ({ device }) => {
-  console.log(`HID connected: ${device.productName}`);
-  connectedJoyCons.set(device.productId, await connectDevice(device));
+  addDevice(device);
 });
 
 navigator.hid.addEventListener('disconnect', ({ device }) => {
-  console.log(`HID disconnected: ${device.productName}`);
-  connectedJoyCons.delete(device.productId);
+  removeDevice(device);
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
   const devices = await navigator.hid.getDevices();
   devices.forEach(async (device) => {
-    connectedJoyCons.set(device.productId, await connectDevice(device));
+    await addDevice(device);
   });
 });
 
@@ -57,18 +77,18 @@ const connectJoyCon = async () => {
     if (!device) {
       return;
     }
-    connectedJoyCons.set(device.productId, await connectDevice(device));
+    await addDevice(device);
   } catch (error) {
     console.error(error.name, error.message);
   }
 };
 
 const connectDevice = async (device) => {
-  let joyCon;
+  let joyCon = null;
   if (device.productId === 0x2006) {
     joyCon = new JoyConLeft(device);
   } else if (device.productId === 0x2007) {
-    if (device.productName.startsWith('Joy-Con (R)')) {
+    if (device.productName === 'Joy-Con (R)') {
       joyCon = new JoyConRight(device);
     }
   }
