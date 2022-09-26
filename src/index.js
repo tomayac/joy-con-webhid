@@ -63,7 +63,7 @@ const connectJoyCon = async () => {
     },
     {
       vendorId: 0x057e, // Nintendo Co., Ltd
-      productId: 0x2009, // ProCon
+      productId: 0x2009, // Pro Controller
     },
     {
       vendorId: 0x057e, // Nintendo Co., Ltd
