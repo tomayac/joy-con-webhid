@@ -14,13 +14,13 @@ const getDeviceID = (device) => {
 
 const addDevice = async (device) => {
   const id = getDeviceID(device);
-  console.log(`HID connected: ${id} ${device.productName}`);
+  console.log(`HID connected: ${id} ${device.productId.toString(16)} ${device.productName}`);
   connectedJoyCons.set(id, await connectDevice(device));
 };
 
 const removeDevice = async (device) => {
   const id = getDeviceID(device);
-  console.log(`HID disconnected: ${id} ${device.productName}`);
+  console.log(`HID disconnected: ${id} ${device.productId.toString(16)} ${device.productName}`);
   connectedJoyCons.delete(id);
 };
 
@@ -59,11 +59,15 @@ const connectJoyCon = async () => {
     },
     {
       vendorId: 0x057e, // Nintendo Co., Ltd
-      productId: 0x2017, // SNES Controller, MD/Gen Control Pad
+      productId: 0x2009, // Pro Controller
     },
     {
       vendorId: 0x057e, // Nintendo Co., Ltd
-      productId: 0x2009, // Pro Controller
+      productId: 0x200e, // Joy-Con Charging Grip
+    },
+    {
+      vendorId: 0x057e, // Nintendo Co., Ltd
+      productId: 0x2017, // SNES Controller, MD/Gen Control Pad
     },
     {
       vendorId: 0x057e, // Nintendo Co., Ltd
