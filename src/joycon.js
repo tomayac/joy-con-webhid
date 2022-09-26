@@ -1,5 +1,5 @@
 import * as PacketParser from './parse.js';
-import { connectRingCon } from "./connectRingCon.js";
+import { connectRingCon } from './connectRingCon.js';
 
 /**
  * Concatenates two typed arrays.
@@ -261,7 +261,7 @@ class JoyCon extends EventTarget {
    * @memberof JoyCon
    * @seeAlso https://github.com/mascii/demo-of-ring-con-with-web-hid
    */
-   async enableRingCon() {
+  async enableRingCon() {
     /*
     const cmds = [
       [0x22, 0x01], // enabling_MCU_data_22_1
@@ -291,7 +291,10 @@ class JoyCon extends EventTarget {
    * @memberof JoyCon
    */
   async enableUSBHIDJoystickReport() {
-    const usb = this.device.collections[0].outputReports.find(r => r.reportId == 0x80) != null;
+    const usb =
+      this.device.collections[0].outputReports.find(
+        (r) => r.reportId == 0x80
+      ) != null;
     if (usb) {
       await this.device.sendReport(0x80, new Uint8Array([0x01]));
       await this.device.sendReport(0x80, new Uint8Array([0x02]));
@@ -299,7 +302,7 @@ class JoyCon extends EventTarget {
       await this.device.sendReport(0x80, new Uint8Array([0x04]));
     }
   }
-  
+
   /**
    * Send a rumble signal to Joy-Con.
    *
@@ -364,22 +367,26 @@ class JoyCon extends EventTarget {
 
   /**
    * set LED state.
+   * @param {int} n position(0-3)
    *
    * @memberof JoyCon
    */
-   async setLEDState(n) {
+  async setLEDState(n) {
     const NO_RUMBLE = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
     const subcommand = [0x30, n];
-    await this.device.sendReport(0x01, new Uint8Array([...NO_RUMBLE, 0, ...subcommand]));
+    await this.device.sendReport(
+      0x01,
+      new Uint8Array([...NO_RUMBLE, 0, ...subcommand])
+    );
   }
 
   /**
    * set LED.
    *
    * @memberof JoyCon
-   * @param n position(0-3)
+   * @param {int} n position(0-3)
    */
-   async setLED(n) {
+  async setLED(n) {
     this.ledstate |= 1 << n;
     await this.setLEDState(this.ledstate);
   }
@@ -388,9 +395,9 @@ class JoyCon extends EventTarget {
    * reset LED.
    *
    * @memberof JoyCon
-   * @param n position(0-3)
+   * @param {int} n position(0-3)
    */
-   async resetLED(n) {
+  async resetLED(n) {
     this.ledstate &= ~((1 << n) | (1 << (4 + n)));
     await this.setLEDState(this.ledstate);
   }
@@ -399,9 +406,9 @@ class JoyCon extends EventTarget {
    * blink LED.
    *
    * @memberof JoyCon
-   * @param n position(0-3)
+   * @param {int} n position(0-3)
    */
-   async blinkLED(n) {
+  async blinkLED(n) {
     this.ledstate &= ~(1 << n);
     this.ledstate |= 1 << (4 + n);
     await this.setLEDState(this.ledstate);
@@ -641,7 +648,7 @@ class GeneralController extends JoyCon {
    * @param {*} packet
    * @memberof GeneralController
    */
-   _receiveInputEvent(packet) {
+  _receiveInputEvent(packet) {
     this.dispatchEvent(new CustomEvent('hidinput', { detail: packet }));
   }
 }

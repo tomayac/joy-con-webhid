@@ -14,13 +14,21 @@ const getDeviceID = (device) => {
 
 const addDevice = async (device) => {
   const id = getDeviceID(device);
-  console.log(`HID connected: ${id} ${device.productId.toString(16)} ${device.productName}`);
+  console.log(
+    `HID connected: ${id} ${device.productId.toString(16)} ${
+      device.productName
+    }`
+  );
   connectedJoyCons.set(id, await connectDevice(device));
 };
 
 const removeDevice = async (device) => {
   const id = getDeviceID(device);
-  console.log(`HID disconnected: ${id} ${device.productId.toString(16)} ${device.productName}`);
+  console.log(
+    `HID disconnected: ${id} ${device.productId.toString(16)} ${
+      device.productName
+    }`
+  );
   connectedJoyCons.delete(id);
 };
 
@@ -97,7 +105,7 @@ const connectDevice = async (device) => {
     }
   }
   if (!joyCon) {
-    //console.log(device.productId.toString(16), device.productName);
+    // console.log(device.productId.toString(16), device.productName);
     joyCon = new GeneralController(device); // for other controllers
   }
   await joyCon.open();

@@ -70,6 +70,7 @@ const scale = Math.PI / 2;
  * accelerometer data.
  *
  * @export
+ * @param {object} lastValues
  * @param {*} gyroscope
  * @param {*} accelerometer
  * @param {*} productId
@@ -77,9 +78,7 @@ const scale = Math.PI / 2;
  */
 export function toEulerAngles(lastValues, gyroscope, accelerometer, productId) {
   const now = Date.now();
-  const dt = lastValues.timestamp
-    ? (now - lastValues.timestamp) / 1000
-    : 0;
+  const dt = lastValues.timestamp ? (now - lastValues.timestamp) / 1000 : 0;
   lastValues.timestamp = now;
 
   // Treat the acceleration vector as an orientation vector by normalizing it.
@@ -90,8 +89,7 @@ export function toEulerAngles(lastValues, gyroscope, accelerometer, productId) {
     accelerometer.x ** 2 + accelerometer.y ** 2 + accelerometer.z ** 2
   );
 
-  lastValues.alpha =
-    (1 - zeroBias) * (lastValues.alpha + gyroscope.z * dt);
+  lastValues.alpha = (1 - zeroBias) * (lastValues.alpha + gyroscope.z * dt);
   if (norm !== 0) {
     lastValues.beta =
       bias * (lastValues.beta + gyroscope.x * dt) +
@@ -104,14 +102,8 @@ export function toEulerAngles(lastValues, gyroscope, accelerometer, productId) {
     alpha:
       // ToDo: I could only get this to work with a magic multiplier (430).
       productId === 0x2006
-        ? (
-            (((-1 * (lastValues.alpha * 180)) / Math.PI) * 430) %
-            90
-          ).toFixed(6)
-        : (
-            (((lastValues.alpha * 180) / Math.PI) * 430) %
-            360
-          ).toFixed(6),
+        ? ((((-1 * (lastValues.alpha * 180)) / Math.PI) * 430) % 90).toFixed(6)
+        : ((((lastValues.alpha * 180) / Math.PI) * 430) % 360).toFixed(6),
     beta: ((-1 * (lastValues.beta * 180)) / Math.PI).toFixed(6),
     gamma:
       productId === 0x2006
