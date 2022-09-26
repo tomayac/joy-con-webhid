@@ -97,6 +97,7 @@ const connectDevice = async (device) => {
     joyCon = new GeneralController(device); // for other controllers
   }
   await joyCon.open();
+  await joyCon.enableUSBHIDJoystickReport();
   await joyCon.enableStandardFullMode();
   await joyCon.enableIMUMode();
   return joyCon;

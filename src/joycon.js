@@ -286,6 +286,21 @@ class JoyCon extends EventTarget {
   }
 
   /**
+   * Enables USB HID Joystick report
+   *
+   * @memberof JoyCon
+   */
+  async enableUSBHIDJoystickReport() {
+    const usb = this.device.collections[0].outputReports.find(r => r.reportId == 0x80) != null;
+    if (usb) {
+      await this.device.sendReport(0x80, new Uint8Array([0x01]));
+      await this.device.sendReport(0x80, new Uint8Array([0x02]));
+      await this.device.sendReport(0x01, new Uint8Array([0x03]));
+      await this.device.sendReport(0x80, new Uint8Array([0x04]));
+    }
+  }
+  
+  /**
    * Send a rumble signal to Joy-Con.
    *
    * @param {number} lowFrequency
