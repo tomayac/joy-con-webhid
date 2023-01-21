@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="origin-trial"
+      content="AkisjDZ3ibaWITOif2wSFf4B6SRp1qz1VZNuZusp0ieqEa11BUdxqNuFh+MXL1966QFAQs1tZlz4sidsnlW2YAQAAABReyJvcmlnaW4iOiJodHRwczovL3RvbWF5YWMuZ2l0aHViLmlvOjQ0MyIsImZlYXR1cmUiOiJXZWJISUQiLCJleHBpcnkiOjE2MTM0NzY0Mjh9"
+    />
+
+    <title>
+      Joy-Con WebHID MIDI Demo
+    </title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="joy-cons.css" />
+
+    <script src="webmidi.js" type="module"></script>
+  </head>
+  <body>
+    <h1>
+      Joy-Con WebHID MIDI Demo
+    </h1>
+    <ol>
+      <li>
+        Connect the
+        <a href="https://en.wikipedia.org/wiki/Joy-Con#Other_platforms"
+          >Joy-Cons</a
+        >
+        via the operating system's Bluetooth setup dialog.
+      </li>
+      <li>
+        Click the button below to pair the Joy-Cons via
+        <a href="https://web.dev/hid/">WebHID</a>.
+        <div>
+          <button id="connect-joy-cons" type="button">Connect Joy-Cons</button>
+        </div>
+      </li>
+      <li>
+        Start your midi receiver (such as loopMidi, LoopBe1, or some DAWs such
+        as Cubase) then click connect:
+        <div>
+          <button id="connect-midi" type="button">Connect MIDI</button>
+          <label for="connect-midi" id="connect-midi-label" />
+        </div>
+      </li>
+      <li>
+        This will send MIDI Notes for the directional buttons and L/R/ZL/RL,
+        and MIDI CC for up/down/twist orientations, analog sticks and rail
+        buttons. Home/Capture and +/- send both Note and CC.
+      </li>
+      <li>
+        Disable visualization for better latency / CPU performance.
+      </li>
+    </ol>
+    <div>
+      <input id="show-visualize" type="checkbox" checked="true" />
+      <label for="show-visualize">Visualize Joycons</label>
+      <input id="show-debug" type="checkbox" />
+      <label for="show-debug">Show debug info</label>
+    </div>
+
+    <figure>
+      <div id="joycon-l" class="joycon productId8198">
+        <div id="joystick-left" class="joystick"></div>
+        <div class="buttons">
+          <button id="up"></button>
+          <button id="left"></button>
+          <button id="down"></button>
+          <button id="right"></button>
+        </div>
+        <span id="minus"></span>
+        <i id="capture"></i>
+        <strong class="back-buttons" id="l"></strong>
+      </div>
+      <div id="joycon-r" class="joycon productId8199">
+        <div id="joystick-right" class="joystick"></div>
+        <div class="buttons">
+          <button id="x"></button>
+          <button id="y"></button>
+          <button id="b"></button>
+          <button id="a"></button>
+        </div>
+        <span id="plus"></span>
+        <i id="home"></i>
+        <strong class="back-buttons" id="r"></strong>
+      </div>
+    </figure>
+
+    <div id="debug">
+      <div id="debug-left">
+        <pre></pre>
+        <p>Acceleration</p>
+        <meter id="acc-x" min="-1" max="1"></meter>
+        <meter id="acc-y" min="-1" max="1"></meter>
+        <meter id="acc-z" min="-1" max="1"></meter>
+        <br />
+        <p>Gyroscope</p>
+        <meter id="gyr-x" min="-1" max="1"></meter>
+        <meter id="gyr-y" min="-1" max="1"></meter>
+        <meter id="gyr-z" min="-1" max="1"></meter>
+      </div>
+
+      <div id="debug-right">
+        <pre></pre>
+        <p>Acceleration</p>
+        <meter id="acc-x" min="-1" max="1"></meter>
+        <meter id="acc-y" min="-1" max="1"></meter>
+        <meter id="acc-z" min="-1" max="1"></meter>
+        <br />
+        <p>Gyroscope</p>
+        <meter id="gyr-x" min="-1" max="1"></meter>
+        <meter id="gyr-y" min="-1" max="1"></meter>
+        <meter id="gyr-z" min="-1" max="1"></meter>
+      </div>
+    </div>
+
+    <footer>
+      Joy-Con models via
+      <a
+        href="https://codepen.io/stix/details/WRoweX#input_1604658346501:~:text=License"
+        >Stix</a
+      >
+      on CodePen.
+    </footer>
+  </body>
+</html>
