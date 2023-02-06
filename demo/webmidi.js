@@ -11,22 +11,22 @@ const rootStyle = document.documentElement.style;
 
 connectButton.addEventListener('click', connectJoyCon);
 
-var midiout = null;
+let midiout = null;
 
 const onMIDISuccess = (midiAccess) => {
-  var inputs = midiAccess.inputs;
-  var outputs = midiAccess.outputs;;
-  for (var o of outputs.values()) {
+  const inputs = midiAccess.inputs;
+  const outputs = midiAccess.outputs;;
+  for (const o of outputs.values()) {
     midiout = o;
     console.log(o);
-    connectMidiLabel.innerHTML = "Connected to " + o.name;
+    connectMidiLabel.textContent = "Connected to " + o.name;
     return;
   }
-  connectMidiLabel.innerHTML = "No MIDI receivers found!";
+  connectMidiLabel.textContent = "No MIDI receivers found!";
 }
 
 const onMIDIFailure = () => {
-  connectMidiLabel.innerHTML = "Permission denied by browser";
+  connectMidiLabel.textContent = "Permission denied by browser";
 }
 
 const connectMidi = () => {
@@ -34,7 +34,7 @@ const connectMidi = () => {
     navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
     return;
   } else {
-    connectMidiLabel.innerHTML = "MIDI unsupported by browser";
+    connectMidiLabel.textContent = "MIDI unsupported by browser";
   }
 }
 

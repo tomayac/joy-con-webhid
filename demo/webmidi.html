@@ -9,7 +9,7 @@
     />
 
     <title>
-      Joy-Con WebHID MIDI Demo
+      Joy-Con WebHID Web MIDI Demo
     </title>
 
     <link rel="stylesheet" href="style.css" />
@@ -19,7 +19,7 @@
   </head>
   <body>
     <h1>
-      Joy-Con WebHID MIDI Demo
+      Joy-Con WebHID Web MIDI Demo
     </h1>
     <ol>
       <li>
@@ -37,17 +37,17 @@
         </div>
       </li>
       <li>
-        Start your midi receiver (such as loopMidi, LoopBe1, or some DAWs such
-        as Cubase) then click connect:
+        Start your Web MIDI receiver (such as loopMidi, LoopBe1, or some DAWs such
+        as Cubase), then click "Connect MIDI":
         <div>
           <button id="connect-midi" type="button">Connect MIDI</button>
           <label for="connect-midi" id="connect-midi-label" />
         </div>
       </li>
       <li>
-        This will send MIDI Notes for the directional buttons and L/R/ZL/RL,
-        and MIDI CC for up/down/twist orientations, analog sticks and rail
-        buttons. Home/Capture and +/- send both Note and CC.
+        This will send MIDI notes for the directional buttons and L/R/ZL/RL,
+        and MIDI CC (Control Change) for up/down/twist orientations, analog sticks, and rail
+        buttons. Home/Capture and +/- send both note and CC.
       </li>
       <li>
         Disable visualization for better latency / CPU performance.
