@@ -1,6 +1,6 @@
 {
   "name": "joy-con-webhid",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Joy-Con over WebHID ",
   "scripts": {
     "start": "npx http-server",
@@ -36,13 +36,13 @@
   },
   "homepage": "https://github.com/tomayac/joy-con-webhid#readme",
   "devDependencies": {
-    "eslint": "^8.24.0",
+    "eslint": "^8.33.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^8.6.0",
     "http-server": "^14.1.1",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.3",
     "shx": "^0.3.4",
-    "terser": "^5.15.0"
+    "terser": "^5.16.3"
   },
   "eslintConfig": {
     "parserOptions": {

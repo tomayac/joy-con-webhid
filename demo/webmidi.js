@@ -14,275 +14,323 @@ connectButton.addEventListener('click', connectJoyCon);
 let midiout = null;
 
 const onMIDISuccess = (midiAccess) => {
-  const inputs = midiAccess.inputs;
-  const outputs = midiAccess.outputs;;
+  const outputs = midiAccess.outputs;
   for (const o of outputs.values()) {
     midiout = o;
     console.log(o);
-    connectMidiLabel.textContent = "Connected to " + o.name;
+    connectMidiLabel.textContent = 'Connected to ' + o.name;
     return;
   }
-  connectMidiLabel.textContent = "No MIDI receivers found!";
-}
+  connectMidiLabel.textContent = 'No MIDI receivers found!';
+};
 
 const onMIDIFailure = () => {
-  connectMidiLabel.textContent = "Permission denied by browser";
-}
+  connectMidiLabel.textContent = 'Permission denied by browser';
+};
 
 const connectMidi = () => {
   if (navigator.requestMIDIAccess) {
     navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
     return;
   } else {
-    connectMidiLabel.textContent = "MIDI unsupported by browser";
+    connectMidiLabel.textContent = 'MIDI unsupported by browser';
   }
-}
+};
 
 connectMidiButton.addEventListener('click', connectMidi);
 
-const sendMidi = (bytes, msg = "") => {
-  if(midiout) {
-    console.log(bytes + " " + msg);
+const sendMidi = (bytes, msg = '') => {
+  if (midiout) {
+    console.log(bytes + ' ' + msg);
     midiout.send(bytes);
   } else {
-    console.log("MIDI not connected");
+    console.log('MIDI not connected');
   }
-}
+};
 
-var MIDI_NOTE_ON_CH_1 = 0x90;
-var MIDI_NOTE_OFF_CH_1 = 0x80;
-var MIDI_VELOCITY = 0x7F;
-var MIDI_OFF_VELOCITY = 0x7F;
-var MIDI_VELOCITY_MAX = 0x7F;
-var MIDI_VELOCITY_MIN = 0;
-var MIDI_CC_CH_1 = 0xB0;
+const MIDI_NOTE_ON_CH_1 = 0x90;
+const MIDI_NOTE_OFF_CH_1 = 0x80;
+const MIDI_VELOCITY_MAX = 0x7f;
+const MIDI_VELOCITY_MIN = 0;
+const MIDI_CC_CH_1 = 0xb0;
 
 // Returns a function that converts a boolean value to a note-on or note-off
 // message.
-const note_on_off = (note) => {
-  return (read_value) => ([read_value ? MIDI_NOTE_ON_CH_1 : MIDI_NOTE_OFF_CH_1,
-                           note,
-                           MIDI_VELOCITY_MAX])
-}
+const noteOnOff = (note) => {
+  return (readValue) => [
+    readValue ? MIDI_NOTE_ON_CH_1 : MIDI_NOTE_OFF_CH_1,
+    note,
+    MIDI_VELOCITY_MAX,
+  ];
+};
 
 // Returns a function that converts a boolean value to a CC message.
-const button_cc_for_control = (control) => {
-  return (read_value) => ([MIDI_CC_CH_1,
-                           control,
-                           read_value ? MIDI_VELOCITY_MAX : MIDI_VELOCITY_MIN]);
-}
+const buttonCCForControl = (control) => {
+  return (readValue) => [
+    MIDI_CC_CH_1,
+    control,
+    readValue ? MIDI_VELOCITY_MAX : MIDI_VELOCITY_MIN,
+  ];
+};
 
 // Returns a function that convents a float in the range 0-1 to a CC message.
-const analog_cc_for_control = (control) => {
-  return (read_value) => ([MIDI_CC_CH_1,
-                           control,
-                           Math.max(Math.min(Math.round(127 * read_value),
-                                             MIDI_VELOCITY_MAX),
-                                    MIDI_VELOCITY_MIN)]);
-}
+const analogCCForControl = (control) => {
+  return (readValue) => [
+    MIDI_CC_CH_1,
+    control,
+    Math.max(
+      Math.min(Math.round(127 * readValue), MIDI_VELOCITY_MAX),
+      MIDI_VELOCITY_MIN
+    ),
+  ];
+};
 
-let left_controls = [
+const leftControls = [
   // Define buttons first since they're latency critical and the updates are
   // rarer.
   {
-    name: "down-button",
-    read_value: (packet) => (packet.buttonStatus.down),
-    generate_midi: note_on_off(0x24)
-  }, {
-    name: "right-button",
-    read_value: (packet) => (packet.buttonStatus.right),
-    generate_midi: note_on_off(0x25)
-  }, {
-    name: "up-button",
-    read_value: (packet) => (packet.buttonStatus.up),
-    generate_midi: note_on_off(0x26)
-  }, {
-    name: "left-button",
-    read_value: (packet) => (packet.buttonStatus.left),
-    generate_midi: note_on_off(0x27)
-  }, {
-    name: "l-button",
-    read_value: (packet) => (packet.buttonStatus.l),
-    generate_midi: note_on_off(0x28)
-  }, {
-    name: "zl-button",
-    read_value: (packet) => (packet.buttonStatus.zl),
-    generate_midi: note_on_off(0x29)
-  }, {
-    name: "capture-button-as-note",
-    read_value: (packet) => (packet.buttonStatus.capture),
-    generate_midi: note_on_off(0x2A)
-  }, {
-    name: "minus-button-as-note",
-    read_value: (packet) => (packet.buttonStatus.minus),
-    generate_midi: note_on_off(0x2B)
-  },
-  
-  // Control (CC) buttons
-  {
-    name: "minus-button-as-cc",
-    read_value: (packet) => (packet.buttonStatus.minus),
-    generate_midi: button_cc_for_control(0x01)
-  }, {
-    name: "capture-button-as-cc",
-    read_value: (packet) => (packet.buttonStatus.capture),
-    generate_midi: button_cc_for_control(0x02)
-  }, {
-    name: "l-sl-button",
-    read_value: (packet) => (packet.buttonStatus.sl),
-    generate_midi: button_cc_for_control(0x03)
-  }, {
-    name: "l-sr-button",
-    read_value: (packet) => (packet.buttonStatus.sr),
-    generate_midi: button_cc_for_control(0x04)
-  }, {
-    name: "l-stick",
-    read_value: (packet) => (packet.buttonStatus.leftStick),
-    generate_midi: button_cc_for_control(0x05)
-  },
-  
-  // Analog controls (CC)
-  {
-    name: "l-orientation.beta",
-    read_value: (packet) =>
-                  ((Number(packet.actualOrientation.beta) + 90.0) / 180.0),
-    generate_midi: analog_cc_for_control(0x0B),
-    threshold: 3 / 180.0
-  }, {
-    name: "l-orientation.gamma",
-    read_value: (packet) =>
-                  ((Number(packet.actualOrientation.gamma) + 90.0) / 180.0),
-    generate_midi: analog_cc_for_control(0x0C),
-    threshold: 3 / 180.0
-  }, {
-    name: "l-analog-horizontal",
-    read_value: (packet) => {
-      const hmin = -1.2;
-      const hmax = 1.4;
-      return (Math.max(hmin,
-                        Math.min(Number(packet.analogStickLeft.horizontal),
-                                 hmax)) - hmin)
-             / (hmax - hmin);
-    },
-    generate_midi: analog_cc_for_control(0x0D),
-    threshold: 0.02
-  }, {
-    name: "l-analog-vertical",
-    read_value: (packet) => {
-      const vmin = -.7;
-      const vmax = 0.9 ;
-      return (Math.max(vmin,
-                       Math.min(Number(packet.analogStickLeft.vertical),
-                                 vmax)) - vmin)
-             / (vmax - vmin);
-    },
-    generate_midi: analog_cc_for_control(0x0E),
-    threshold: 0.02
-  }];
-
-let right_controls = [
-  // Define buttons first since they're latency critical and the updates are
-  // rarer.
-  {
-    name: "b-button",
-    read_value: (packet) => (packet.buttonStatus.b),
-    generate_midi: note_on_off(0x2C)
-  }, {
-    name: "a-button",
-    read_value: (packet) => (packet.buttonStatus.a),
-    generate_midi: note_on_off(0x2D)
-  }, {
-    name: "x-button",
-    read_value: (packet) => (packet.buttonStatus.x),
-    generate_midi: note_on_off(0x2E)
-  }, {
-    name: "y-button",
-    read_value: (packet) => (packet.buttonStatus.y),
-    generate_midi: note_on_off(0x2F)
-  }, {
-    name: "r-button",
-    read_value: (packet) => (packet.buttonStatus.r),
-    generate_midi: note_on_off(0x30)
-  }, {
-    name: "zr-button",
-    read_value: (packet) => (packet.buttonStatus.zr),
-    generate_midi: note_on_off(0x31)
+    name: 'down-button',
+    read_value: (packet) => packet.buttonStatus.down,
+    generate_midi: noteOnOff(0x24),
   },
   {
-    name: "home-button-as-note",
-    read_value: (packet) => (packet.buttonStatus.home),
-    generate_midi: note_on_off(0x32)
+    name: 'right-button',
+    read_value: (packet) => packet.buttonStatus.right,
+    generate_midi: noteOnOff(0x25),
   },
   {
-    name: "plus-button-as-note",
-    read_value: (packet) => (packet.buttonStatus.plus),
-    generate_midi: note_on_off(0x33)
+    name: 'up-button',
+    read_value: (packet) => packet.buttonStatus.up,
+    generate_midi: noteOnOff(0x26),
+  },
+  {
+    name: 'left-button',
+    read_value: (packet) => packet.buttonStatus.left,
+    generate_midi: noteOnOff(0x27),
+  },
+  {
+    name: 'l-button',
+    read_value: (packet) => packet.buttonStatus.l,
+    generate_midi: noteOnOff(0x28),
+  },
+  {
+    name: 'zl-button',
+    read_value: (packet) => packet.buttonStatus.zl,
+    generate_midi: noteOnOff(0x29),
+  },
+  {
+    name: 'capture-button-as-note',
+    read_value: (packet) => packet.buttonStatus.capture,
+    generate_midi: noteOnOff(0x2a),
+  },
+  {
+    name: 'minus-button-as-note',
+    read_value: (packet) => packet.buttonStatus.minus,
+    generate_midi: noteOnOff(0x2b),
   },
 
   // Control (CC) buttons
   {
-    name: "plus-button-as-cc",
-    read_value: (packet) => (packet.buttonStatus.plus),
-    generate_midi: button_cc_for_control(0x06)
-  }, {
-    name: "home-button-as-cc",
-    read_value: (packet) => (packet.buttonStatus.home),
-    generate_midi: button_cc_for_control(0x07)
-  }, {
-    name: "sr-button",
-    read_value: (packet) => (packet.buttonStatus.sr),
-    generate_midi: button_cc_for_control(0x08)
-  }, {
-    name: "sl-button",
-    read_value: (packet) => (packet.buttonStatus.sl),
-    generate_midi: button_cc_for_control(0x09)
-  }, {
-    name: "r-stick",
-    read_value: (packet) => (packet.buttonStatus.rightStick),
-    generate_midi: button_cc_for_control(0x0A)
+    name: 'minus-button-as-cc',
+    read_value: (packet) => packet.buttonStatus.minus,
+    generate_midi: buttonCCForControl(0x01),
+  },
+  {
+    name: 'capture-button-as-cc',
+    read_value: (packet) => packet.buttonStatus.capture,
+    generate_midi: buttonCCForControl(0x02),
+  },
+  {
+    name: 'l-sl-button',
+    read_value: (packet) => packet.buttonStatus.sl,
+    generate_midi: buttonCCForControl(0x03),
+  },
+  {
+    name: 'l-sr-button',
+    read_value: (packet) => packet.buttonStatus.sr,
+    generate_midi: buttonCCForControl(0x04),
+  },
+  {
+    name: 'l-stick',
+    read_value: (packet) => packet.buttonStatus.leftStick,
+    generate_midi: buttonCCForControl(0x05),
   },
 
   // Analog controls (CC)
   {
-    name: "orientation.beta",
+    name: 'l-orientation.beta',
     read_value: (packet) =>
-                  ((Number(packet.actualOrientation.beta) + 90.0) / 180.0),
-    generate_midi: analog_cc_for_control(0x0F),
-    threshold: 3 / 180.0
-  }, {
-    name: "orientation.gamma",
+      (Number(packet.actualOrientation.beta) + 90.0) / 180.0,
+    generate_midi: analogCCForControl(0x0b),
+    threshold: 3 / 180.0,
+  },
+  {
+    name: 'l-orientation.gamma',
     read_value: (packet) =>
-                  ((Number(packet.actualOrientation.gamma) + 90.0) / 180.0),
-    generate_midi: analog_cc_for_control(0x10),
-    threshold: 3 / 180.0
-  }, {
-    name: "r-analog-horizontal",
+      (Number(packet.actualOrientation.gamma) + 90.0) / 180.0,
+    generate_midi: analogCCForControl(0x0c),
+    threshold: 3 / 180.0,
+  },
+  {
+    name: 'l-analog-horizontal',
     read_value: (packet) => {
       const hmin = -1.2;
       const hmax = 1.4;
-      return (Math.max(hmin,
-                        Math.min(Number(packet.analogStickRight.horizontal),
-                                 hmax)) - hmin)
-             / (hmax - hmin);
+      return (
+        (Math.max(
+          hmin,
+          Math.min(Number(packet.analogStickLeft.horizontal), hmax)
+        ) -
+          hmin) /
+        (hmax - hmin)
+      );
     },
-    generate_midi: analog_cc_for_control(0x11),
-    threshold: 0.02
-  }, {
-    name: "r-analog-vertical",
+    generate_midi: analogCCForControl(0x0d),
+    threshold: 0.02,
+  },
+  {
+    name: 'l-analog-vertical',
     read_value: (packet) => {
-      const vmin = -.7;
+      const vmin = -0.7;
+      const vmax = 0.9;
+      return (
+        (Math.max(
+          vmin,
+          Math.min(Number(packet.analogStickLeft.vertical), vmax)
+        ) -
+          vmin) /
+        (vmax - vmin)
+      );
+    },
+    generate_midi: analogCCForControl(0x0e),
+    threshold: 0.02,
+  },
+];
+
+const rightControls = [
+  // Define buttons first since they're latency critical and the updates are
+  // rarer.
+  {
+    name: 'b-button',
+    read_value: (packet) => packet.buttonStatus.b,
+    generate_midi: noteOnOff(0x2c),
+  },
+  {
+    name: 'a-button',
+    read_value: (packet) => packet.buttonStatus.a,
+    generate_midi: noteOnOff(0x2d),
+  },
+  {
+    name: 'x-button',
+    read_value: (packet) => packet.buttonStatus.x,
+    generate_midi: noteOnOff(0x2e),
+  },
+  {
+    name: 'y-button',
+    read_value: (packet) => packet.buttonStatus.y,
+    generate_midi: noteOnOff(0x2f),
+  },
+  {
+    name: 'r-button',
+    read_value: (packet) => packet.buttonStatus.r,
+    generate_midi: noteOnOff(0x30),
+  },
+  {
+    name: 'zr-button',
+    read_value: (packet) => packet.buttonStatus.zr,
+    generate_midi: noteOnOff(0x31),
+  },
+  {
+    name: 'home-button-as-note',
+    read_value: (packet) => packet.buttonStatus.home,
+    generate_midi: noteOnOff(0x32),
+  },
+  {
+    name: 'plus-button-as-note',
+    read_value: (packet) => packet.buttonStatus.plus,
+    generate_midi: noteOnOff(0x33),
+  },
+
+  // Control (CC) buttons
+  {
+    name: 'plus-button-as-cc',
+    read_value: (packet) => packet.buttonStatus.plus,
+    generate_midi: buttonCCForControl(0x06),
+  },
+  {
+    name: 'home-button-as-cc',
+    read_value: (packet) => packet.buttonStatus.home,
+    generate_midi: buttonCCForControl(0x07),
+  },
+  {
+    name: 'sr-button',
+    read_value: (packet) => packet.buttonStatus.sr,
+    generate_midi: buttonCCForControl(0x08),
+  },
+  {
+    name: 'sl-button',
+    read_value: (packet) => packet.buttonStatus.sl,
+    generate_midi: buttonCCForControl(0x09),
+  },
+  {
+    name: 'r-stick',
+    read_value: (packet) => packet.buttonStatus.rightStick,
+    generate_midi: buttonCCForControl(0x0a),
+  },
+
+  // Analog controls (CC)
+  {
+    name: 'orientation.beta',
+    read_value: (packet) =>
+      (Number(packet.actualOrientation.beta) + 90.0) / 180.0,
+    generate_midi: analogCCForControl(0x0f),
+    threshold: 3 / 180.0,
+  },
+  {
+    name: 'orientation.gamma',
+    read_value: (packet) =>
+      (Number(packet.actualOrientation.gamma) + 90.0) / 180.0,
+    generate_midi: analogCCForControl(0x10),
+    threshold: 3 / 180.0,
+  },
+  {
+    name: 'r-analog-horizontal',
+    read_value: (packet) => {
+      const hmin = -1.2;
+      const hmax = 1.4;
+      return (
+        (Math.max(
+          hmin,
+          Math.min(Number(packet.analogStickRight.horizontal), hmax)
+        ) -
+          hmin) /
+        (hmax - hmin)
+      );
+    },
+    generate_midi: analogCCForControl(0x11),
+    threshold: 0.02,
+  },
+  {
+    name: 'r-analog-vertical',
+    read_value: (packet) => {
+      const vmin = -0.7;
       const vmax = 1.4;
-      return (Math.max(vmin,
-                       Math.min(Number(packet.analogStickRight.vertical),
-                                 vmax)) - vmin)
-             / (vmax - vmin);
+      return (
+        (Math.max(
+          vmin,
+          Math.min(Number(packet.analogStickRight.vertical), vmax)
+        ) -
+          vmin) /
+        (vmax - vmin)
+      );
     },
-    generate_midi: analog_cc_for_control(0x12),
-    threshold: 0.02
-  }];
+    generate_midi: analogCCForControl(0x12),
+    threshold: 0.02,
+  },
+];
 
 const updateControl = (control, packet, side) => {
-  window.lastPacket = packet
+  window.lastPacket = packet;
   if (control.threshold === undefined) {
     control.threshold = 0;
   }
@@ -292,30 +340,30 @@ const updateControl = (control, packet, side) => {
     }
     control.last_value = control.init_value;
   }
-  const new_value = control.read_value(packet);
-  if (Math.abs(new_value - control.last_value) > control.threshold) {
-    let msg = control.generate_midi(new_value);
+  const newValue = control.read_value(packet);
+  if (Math.abs(newValue - control.last_value) > control.threshold) {
+    const msg = control.generate_midi(newValue);
     if (msg !== undefined) {
       sendMidi(msg, control.name);
     }
-    control.last_value = new_value;
+    control.last_value = newValue;
   }
-}
+};
 
 const updateBothControls = (joyCon, packet) => {
-   if (!packet || !packet.actualOrientation) {
+  if (!packet || !packet.actualOrientation) {
     return;
   }
   if (joyCon instanceof JoyConLeft) {
-    for (const control of left_controls) {
+    for (const control of leftControls) {
       updateControl(control, packet);
     }
   } else {
-    for (const control of right_controls) {
+    for (const control of rightControls) {
       updateControl(control, packet);
     }
   }
-}
+};
 
 const visualize = (joyCon, packet) => {
   if (!packet || !packet.actualOrientation) {
@@ -344,12 +392,17 @@ const visualize = (joyCon, packet) => {
     if (joyCon instanceof JoyConLeft) {
       const joystick = packet.analogStickLeft;
       const joystickMultiplier = 10;
-      document.querySelector('#joystick-left').style.transform = `translateX(${joystick.horizontal * joystickMultiplier
-        }px) translateY(${joystick.vertical * joystickMultiplier}px)`;
+      document.querySelector('#joystick-left').style.transform = `translateX(${
+        joystick.horizontal * joystickMultiplier
+      }px) translateY(${joystick.vertical * joystickMultiplier}px)`;
 
       document.querySelector('#up').classList.toggle('highlight', buttons.up);
-      document.querySelector('#down').classList.toggle('highlight', buttons.down);
-      document.querySelector('#left').classList.toggle('highlight', buttons.left);
+      document
+        .querySelector('#down')
+        .classList.toggle('highlight', buttons.down);
+      document
+        .querySelector('#left')
+        .classList.toggle('highlight', buttons.left);
       document
         .querySelector('#right')
         .classList.toggle('highlight', buttons.right);
@@ -371,21 +424,26 @@ const visualize = (joyCon, packet) => {
     } else {
       const joystick = packet.analogStickRight;
       const joystickMultiplier = 10;
-      document.querySelector('#joystick-right').style.transform = `translateX(${joystick.horizontal * joystickMultiplier
-        }px) translateY(${joystick.vertical * joystickMultiplier}px)`;
+      document.querySelector('#joystick-right').style.transform = `translateX(${
+        joystick.horizontal * joystickMultiplier
+      }px) translateY(${joystick.vertical * joystickMultiplier}px)`;
 
       document.querySelector('#a').classList.toggle('highlight', buttons.a);
       document.querySelector('#b').classList.toggle('highlight', buttons.b);
       document.querySelector('#x').classList.toggle('highlight', buttons.x);
       document.querySelector('#y').classList.toggle('highlight', buttons.y);
-      document.querySelector('#home').classList.toggle('highlight', buttons.home);
+      document
+        .querySelector('#home')
+        .classList.toggle('highlight', buttons.home);
       document
         .querySelector('#r')
         .classList.toggle('highlight', buttons.r || buttons.zr);
       document
         .querySelector('#r')
         .classList.toggle('highlight', buttons.r || buttons.zr);
-      document.querySelector('#plus').classList.toggle('highlight', buttons.plus);
+      document
+        .querySelector('#plus')
+        .classList.toggle('highlight', buttons.plus);
       document
         .querySelector('#joystick-right')
         .classList.toggle('highlight', buttons.rightStick);
