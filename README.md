@@ -15,6 +15,10 @@ can play the Chrome dino game 🦖 over WebHID by jumping with a Joy-Con control
 
 [![Joy-Con WebHID Chrome dino demo](https://img.youtube.com/vi/HuhQXXgDnCQ/0.jpg)](https://www.youtube.com/watch?v=HuhQXXgDnCQ)
 
+Yet another demo courtesy of [@light2peter](https://github.com/light2peter) is the [Web MIDI demo](https://tomayac.github.io/joy-con-webhid/demo/webmidi.html), where the Joy-Cons are being used to make music on Web MIDI receivers.
+
+[![Joy-Con WebHID Web MIDI](https://img.youtube.com/vi/tMTnkjwSFNM/0.jpg)](https://youtu.be/tMTnkjwSFNM?t=42)
+
 ## Installation
 
 ```bash
