@@ -71,7 +71,7 @@ class JoyCon extends EventTarget {
       0x00,
       ...subcommand,
     ];
-    let result = new Promise((resolve) => {
+    const result = new Promise((resolve) => {
       const onDeviceInfo = ({ detail: deviceInfo }) => {
         this.removeEventListener('deviceinfo', onDeviceInfo);
         delete deviceInfo._raw;
@@ -106,7 +106,7 @@ class JoyCon extends EventTarget {
       ...subCommand,
     ];
 
-    let result = new Promise((resolve) => {
+    const result = new Promise((resolve) => {
       const onBatteryLevel = ({ detail: batteryLevel }) => {
         this.removeEventListener('batterylevel', onBatteryLevel);
         delete batteryLevel._raw;
