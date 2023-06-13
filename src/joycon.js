@@ -71,9 +71,7 @@ class JoyCon extends EventTarget {
       0x00,
       ...subcommand,
     ];
-    await this.device.sendReport(outputReportID, new Uint8Array(data));
-
-    return new Promise((resolve) => {
+    let result = new Promise((resolve) => {
       const onDeviceInfo = ({ detail: deviceInfo }) => {
         this.removeEventListener('deviceinfo', onDeviceInfo);
         delete deviceInfo._raw;
@@ -82,6 +80,9 @@ class JoyCon extends EventTarget {
       };
       this.addEventListener('deviceinfo', onDeviceInfo);
     });
+    await this.device.sendReport(outputReportID, new Uint8Array(data));
+
+    return result;
   }
 
   /**
@@ -104,9 +105,8 @@ class JoyCon extends EventTarget {
       0x00,
       ...subCommand,
     ];
-    await this.device.sendReport(outputReportID, new Uint8Array(data));
 
-    return new Promise((resolve) => {
+    let result = new Promise((resolve) => {
       const onBatteryLevel = ({ detail: batteryLevel }) => {
         this.removeEventListener('batterylevel', onBatteryLevel);
         delete batteryLevel._raw;
@@ -115,6 +115,8 @@ class JoyCon extends EventTarget {
       };
       this.addEventListener('batterylevel', onBatteryLevel);
     });
+    await this.device.sendReport(outputReportID, new Uint8Array(data));
+    return result;
   }
 
   /**
