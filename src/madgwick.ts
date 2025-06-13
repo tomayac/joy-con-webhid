@@ -5,24 +5,7 @@
 // Implementation of Madgwick's IMU and AHRS algorithms.
 // See: http://www.x-io.co.uk/node/8#open_source_ahrs_and_imu_algorithms
 //= ====================================================================================================
-
-export interface EulerAngles {
-	heading: number; // Angle around Z-axis
-	pitch: number; // Angle around Y-axis
-	roll: number; // Angle around X-axis
-}
-
-export interface Quaternion {
-	w: number;
-	x: number;
-	y: number;
-	z: number;
-}
-
-export interface MadgwickOptions {
-	beta?: number;
-	doInitialisation?: boolean;
-}
+import type { EulerAngles, MadgwickOptions, Quaternion } from "./types.ts";
 
 export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 	//---------------------------------------------------------------------------------------------------
@@ -324,10 +307,10 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 			const normMz = mz * recipNorm;
 
 			// Auxiliary variables to avoid repeated arithmetic
-			v2q0mx = 2.0 * q0 * mx;
-			v2q0my = 2.0 * q0 * my;
-			v2q0mz = 2.0 * q0 * mz;
-			v2q1mx = 2.0 * q1 * mx;
+			v2q0mx = 2.0 * q0 * normMx;
+			v2q0my = 2.0 * q0 * normMy;
+			v2q0mz = 2.0 * q0 * normMz;
+			v2q1mx = 2.0 * q1 * normMx;
 			v2q0 = 2.0 * q0;
 			v2q1 = 2.0 * q1;
 			v2q2 = 2.0 * q2;
@@ -379,39 +362,39 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 
 			// Gradient decent algorithm corrective step
 			s0 =
-				-v2q2 * (2.0 * q1q3 - v2q0q2 - ax) +
-				v2q1 * (2.0 * q0q1 + v2q2q3 - ay) -
-				v2bz * q2 * (v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - mx) +
+				-v2q2 * (2.0 * q1q3 - v2q0q2 - normAx) +
+				v2q1 * (2.0 * q0q1 + v2q2q3 - normAy) -
+				v2bz * q2 * (v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
 				(-v2bx * q3 + v2bz * q1) *
-					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - my) +
-				v2bx * q2 * (v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - mz);
+					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - normMy) +
+				v2bx * q2 * (v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
 			s1 =
-				v2q3 * (2.0 * q1q3 - v2q0q2 - ax) +
-				v2q0 * (2.0 * q0q1 + v2q2q3 - ay) -
-				4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) +
-				v2bz * q3 * (v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - mx) +
+				v2q3 * (2.0 * q1q3 - v2q0q2 - normAx) +
+				v2q0 * (2.0 * q0q1 + v2q2q3 - normAy) -
+				4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - normAz) +
+				v2bz * q3 * (v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
 				(v2bx * q2 + v2bz * q0) *
-					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - my) +
+					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - normMy) +
 				(v2bx * q3 - v4bz * q1) *
-					(v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - mz);
+					(v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
 			s2 =
-				-v2q0 * (2.0 * q1q3 - v2q0q2 - ax) +
-				v2q3 * (2.0 * q0q1 + v2q2q3 - ay) -
-				4.0 * q2 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - az) +
+				-v2q0 * (2.0 * q1q3 - v2q0q2 - normAx) +
+				v2q3 * (2.0 * q0q1 + v2q2q3 - normAy) -
+				4.0 * q2 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - normAz) +
 				(-v4bx * q2 - v2bz * q0) *
-					(v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - mx) +
+					(v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
 				(v2bx * q1 + v2bz * q3) *
-					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - my) +
+					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - normMy) +
 				(v2bx * q0 - v4bz * q2) *
-					(v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - mz);
+					(v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
 			s3 =
-				v2q1 * (2.0 * q1q3 - v2q0q2 - ax) +
-				v2q2 * (2.0 * q0q1 + v2q2q3 - ay) +
+				v2q1 * (2.0 * q1q3 - v2q0q2 - normAx) +
+				v2q2 * (2.0 * q0q1 + v2q2q3 - normAy) +
 				(-v4bx * q3 + v2bz * q1) *
-					(v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - mx) +
+					(v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
 				(-v2bx * q0 + v2bz * q2) *
-					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - my) +
-				v2bx * q1 * (v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - mz);
+					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - normMy) +
+				v2bx * q1 * (v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
 			recipNorm = (s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) ** -0.5;
 			s0 *= recipNorm;
 			s1 *= recipNorm;

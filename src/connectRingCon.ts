@@ -1,11 +1,6 @@
+import type { SendReportAsyncFunctionOptions } from "./types.ts";
+
 // from https://github.com/mascii/demo-of-ring-con-with-web-hid
-
-export interface SendReportAsyncFunctionOptions {
-	subcommand: number[];
-	expectedReport: Record<number, number>;
-	timeoutErrorMessage?: string;
-}
-
 export const connectRingCon = async (device: HIDDevice): Promise<void> => {
 	const defineSendReportAsyncFunction = ({
 		subcommand,

@@ -1,30 +1,16 @@
 import { Madgwick } from "./madgwick.ts";
-import type { PacketParserType } from "./types.ts";
+import type {
+	Accelerometer,
+	Quaternion,
+	ControllerTypeKey,
+	Gyroscope,
+	LastValues,
+	PacketParserType,
+} from "./types.ts";
 
 const leftMadgwick = Madgwick(10);
 const rightMadgwick = Madgwick(10);
 const rad2deg = 180.0 / Math.PI;
-
-type Gyroscope = { x: number; y: number; z: number };
-type Accelerometer = { x: number; y: number; z: number };
-type Quaternion = { w: number; x: number; y: number; z: number };
-type LastValues = {
-	alpha: number;
-	beta: number;
-	gamma: number;
-	timestamp?: number;
-};
-
-type ControllerTypeKey = 0x1 | 0x2 | 0x3;
-const ControllerType: Record<ControllerTypeKey, string> = {
-	1: "Left Joy-Con",
-	2: "Right Joy-Con",
-	3: "Pro Controller",
-};
-
-const bias = 0.75;
-const zeroBias = 0.0125;
-const scale = Math.PI / 2;
 
 function baseSum<T>(
 	array: T[],
@@ -72,6 +58,19 @@ function calculateBatteryLevel(value: Uint8Array): string {
 	}
 	return level;
 }
+
+const ControllerType = {
+	// biome-ignore lint/complexity/useSimpleNumberKeys:
+	0x1: "Left Joy-Con",
+	// biome-ignore lint/complexity/useSimpleNumberKeys:
+	0x2: "Right Joy-Con",
+	// biome-ignore lint/complexity/useSimpleNumberKeys:
+	0x3: "Pro Controller",
+};
+
+const bias = 0.75;
+const zeroBias = 0.0125;
+const scale = Math.PI / 2;
 
 export function toEulerAngles(
 	lastValues: LastValues,
@@ -304,10 +303,208 @@ export function parseFilter(rawData: Uint8Array, data: Uint8Array) {
 	return filter;
 }
 
+export function parseVibrator(rawData: Uint8Array, data: Uint8Array) {
+	const vibrator = {
+		_raw: rawData.slice(12, 13), // index 12
+		_hex: data.slice(12, 13),
+	};
+
+	return vibrator;
+}
+
+export function parseAck(rawData: Uint8Array, data: Uint8Array) {
+	const ack = {
+		_raw: rawData.slice(13, 14), // index 13
+		_hex: data.slice(13, 14),
+	};
+
+	return ack;
+}
+
+export function parseSubcommandID(rawData: Uint8Array, data: Uint8Array) {
+	const subcommandID = {
+		_raw: rawData.slice(14, 15), // index 14
+		_hex: data.slice(14, 15),
+	};
+
+	return subcommandID;
+}
+
+export function parseSubcommandReplyData(
+	rawData: Uint8Array,
+	data: Uint8Array,
+) {
+	const subcommandReplyData = {
+		_raw: rawData.slice(15), // index 15 ~
+		_hex: data.slice(15),
+	};
+
+	return subcommandReplyData;
+}
+
+export function parseAccelerometers(rawData: Uint8Array, data: Uint8Array) {
+	const accelerometers = [
+		{
+			x: {
+				_raw: rawData.slice(13, 15), // index 13,14
+				_hex: data.slice(13, 15),
+				acc: toAcceleration(rawData.slice(13, 15)),
+			},
+			y: {
+				_raw: rawData.slice(15, 17), // index 15,16
+				_hex: data.slice(15, 17),
+				acc: toAcceleration(rawData.slice(15, 17)),
+			},
+			z: {
+				_raw: rawData.slice(17, 19), // index 17,18
+				_hex: data.slice(17, 19),
+				acc: toAcceleration(rawData.slice(17, 19)),
+			},
+		},
+		{
+			x: {
+				_raw: rawData.slice(25, 27), // index 25,26
+				_hex: data.slice(25, 27),
+				acc: toAcceleration(rawData.slice(25, 27)),
+			},
+			y: {
+				_raw: rawData.slice(27, 29), // index 27,28
+				_hex: data.slice(27, 29),
+				acc: toAcceleration(rawData.slice(27, 29)),
+			},
+			z: {
+				_raw: rawData.slice(29, 31), // index 29,30
+				_hex: data.slice(29, 31),
+				acc: toAcceleration(rawData.slice(29, 31)),
+			},
+		},
+		{
+			x: {
+				_raw: rawData.slice(37, 39), // index 37,38
+				_hex: data.slice(37, 39),
+				acc: toAcceleration(rawData.slice(37, 39)),
+			},
+			y: {
+				_raw: rawData.slice(39, 41), // index 39,40
+				_hex: data.slice(39, 41),
+				acc: toAcceleration(rawData.slice(39, 41)),
+			},
+			z: {
+				_raw: rawData.slice(41, 43), // index 41,42
+				_hex: data.slice(41, 43),
+				acc: toAcceleration(rawData.slice(41, 43)),
+			},
+		},
+	];
+
+	return accelerometers;
+}
+
+export function parseGyroscopes(rawData: Uint8Array, data: Uint8Array) {
+	const gyroscopes = [
+		[
+			{
+				_raw: rawData.slice(19, 21), // index 19,20
+				_hex: data.slice(19, 21),
+				dps: toDegreesPerSecond(rawData.slice(19, 21)),
+				rps: toRevolutionsPerSecond(rawData.slice(19, 21)),
+			},
+			{
+				_raw: rawData.slice(21, 23), // index 21,22
+				_hex: data.slice(21, 23),
+				dps: toDegreesPerSecond(rawData.slice(21, 23)),
+				rps: toRevolutionsPerSecond(rawData.slice(21, 23)),
+			},
+			{
+				_raw: rawData.slice(23, 25), // index 23,24
+				_hex: data.slice(23, 25),
+				dps: toDegreesPerSecond(rawData.slice(23, 25)),
+				rps: toRevolutionsPerSecond(rawData.slice(23, 25)),
+			},
+		],
+		[
+			{
+				_raw: rawData.slice(31, 33), // index 31,32
+				_hex: data.slice(31, 33),
+				dps: toDegreesPerSecond(rawData.slice(31, 33)),
+				rps: toRevolutionsPerSecond(rawData.slice(31, 33)),
+			},
+			{
+				_raw: rawData.slice(33, 35), // index 33,34
+				_hex: data.slice(33, 35),
+				dps: toDegreesPerSecond(rawData.slice(33, 35)),
+				rps: toRevolutionsPerSecond(rawData.slice(33, 35)),
+			},
+			{
+				_raw: rawData.slice(35, 37), // index 35,36
+				_hex: data.slice(35, 37),
+				dps: toDegreesPerSecond(rawData.slice(35, 37)),
+				rps: toRevolutionsPerSecond(rawData.slice(35, 37)),
+			},
+		],
+		[
+			{
+				_raw: rawData.slice(43, 45), // index 43,44
+				_hex: data.slice(43, 45),
+				dps: toDegreesPerSecond(rawData.slice(43, 45)),
+				rps: toRevolutionsPerSecond(rawData.slice(43, 45)),
+			},
+			{
+				_raw: rawData.slice(45, 47), // index 45,46
+				_hex: data.slice(45, 47),
+				dps: toDegreesPerSecond(rawData.slice(45, 47)),
+				rps: toRevolutionsPerSecond(rawData.slice(45, 47)),
+			},
+			{
+				_raw: rawData.slice(47, 49), // index 47,48
+				_hex: data.slice(47, 49),
+				dps: toDegreesPerSecond(rawData.slice(47, 49)),
+				rps: toRevolutionsPerSecond(rawData.slice(47, 49)),
+			},
+		],
+	];
+
+	return gyroscopes;
+}
+
+export function calculateActualAccelerometer(accelerometers) {
+	const elapsedTime = 0.005 * accelerometers.length; // Spent 5ms to collect each data.
+
+	const actualAccelerometer = {
+		x: Number.parseFloat(
+			(mean(accelerometers.map((g) => g[0])) * elapsedTime).toFixed(6),
+		),
+		y: Number.parseFloat(
+			(mean(accelerometers.map((g) => g[1])) * elapsedTime).toFixed(6),
+		),
+		z: Number.parseFloat(
+			(mean(accelerometers.map((g) => g[2])) * elapsedTime).toFixed(6),
+		),
+	};
+
+	return actualAccelerometer;
+}
+
+export function calculateActualGyroscope(gyroscopes) {
+	const elapsedTime = 0.005 * gyroscopes.length; // Spent 5ms to collect each data.
+
+	const actualGyroscopes = [
+		mean(gyroscopes.map((g) => g[0])),
+		mean(gyroscopes.map((g) => g[1])),
+		mean(gyroscopes.map((g) => g[2])),
+	].map((v) => Number.parseFloat((v * elapsedTime).toFixed(6)));
+
+	return {
+		x: actualGyroscopes[0],
+		y: actualGyroscopes[1],
+		z: actualGyroscopes[2],
+	};
+}
+
 export function parseRingCon(rawData: Uint8Array, data: Uint8Array) {
 	const ringcon = {
-		_raw: rawData.slice(38, 40),
-		_hex: data.slice(38, 40),
+		_raw: rawData.slice(38, 2),
+		_hex: data.slice(38, 2),
 		strain: new DataView(rawData.buffer, 39, 2).getInt16(0, true),
 	};
 	return ringcon;
