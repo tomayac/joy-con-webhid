@@ -4,8 +4,9 @@ import type {
 	Quaternion,
 	ControllerTypeKey,
 	Gyroscope,
-	LastValues,
 	PacketParserType,
+	JoyConLastValues,
+	AccelerometerData,
 } from "./types.ts";
 
 const leftMadgwick = Madgwick(10);
@@ -35,22 +36,22 @@ function baseMean<T>(array: T[], iteratee: (value: T) => number): number {
 	return length ? (baseSum(array, iteratee) as number) / length : Number.NaN;
 }
 
-function calculateBatteryLevel(value: Uint8Array): string {
+function calculateBatteryLevel(value: string): string {
 	let level: string;
 	switch (value[0]) {
-		case 8:
+		case "8":
 			level = "full";
 			break;
-		case 4:
+		case "4":
 			level = "medium";
 			break;
-		case 2:
+		case "2":
 			level = "low";
 			break;
-		case 1:
+		case "1":
 			level = "critical";
 			break;
-		case 0:
+		case "0":
 			level = "empty";
 			break;
 		default:
@@ -73,7 +74,7 @@ const zeroBias = 0.0125;
 const scale = Math.PI / 2;
 
 export function toEulerAngles(
-	lastValues: LastValues,
+	lastValues: JoyConLastValues,
 	gyroscope: Gyroscope,
 	accelerometer: Accelerometer,
 	productId: number,
@@ -154,7 +155,7 @@ function toRevolutionsPerSecond(value: Uint8Array): number {
 	return Number.parseFloat((0.0001694 * view.getInt16(0, true)).toFixed(6));
 }
 
-export function parseDeviceInfo(rawData: Uint8Array, data: Uint8Array) {
+export function parseDeviceInfo(rawData: Uint8Array) {
 	const bytes = rawData.slice(15, 15 + 11);
 	const firmwareMajorVersionRaw = bytes.slice(0, 1)[0]; // index 0
 	const firmwareMinorVersionRaw = bytes.slice(1, 2)[0]; // index 1
@@ -182,7 +183,10 @@ export function parseDeviceInfo(rawData: Uint8Array, data: Uint8Array) {
 	return result;
 }
 
-export function parseInputReportID(rawData: Uint8Array, data: Uint8Array) {
+export function parseInputReportID(
+	rawData: Uint8Array,
+	data: string,
+): PacketParserType {
 	const inputReportID = {
 		_raw: rawData.slice(0, 1), // index 0
 		_hex: data.slice(0, 1),
@@ -190,7 +194,10 @@ export function parseInputReportID(rawData: Uint8Array, data: Uint8Array) {
 	return inputReportID;
 }
 
-export function parseTimer(rawData: Uint8Array, data: Uint8Array) {
+export function parseTimer(
+	rawData: Uint8Array,
+	data: string,
+): PacketParserType {
 	const timer = {
 		_raw: rawData.slice(1, 2), // index 1
 		_hex: data.slice(1, 2),
@@ -198,7 +205,7 @@ export function parseTimer(rawData: Uint8Array, data: Uint8Array) {
 	return timer;
 }
 
-export function parseBatteryLevel(rawData: Uint8Array, data: Uint8Array) {
+export function parseBatteryLevel(rawData: Uint8Array, data: string) {
 	const batteryLevel: PacketParserType = {
 		_raw: rawData.slice(2, 3), // high nibble
 		_hex: data.slice(2, 3),
@@ -207,7 +214,7 @@ export function parseBatteryLevel(rawData: Uint8Array, data: Uint8Array) {
 	return batteryLevel;
 }
 
-export function parseConnectionInfo(rawData: Uint8Array, data: Uint8Array) {
+export function parseConnectionInfo(rawData: Uint8Array, data: string) {
 	const connectionInfo = {
 		_raw: rawData.slice(2, 3), // low nibble
 		_hex: data.slice(2, 3),
@@ -215,7 +222,7 @@ export function parseConnectionInfo(rawData: Uint8Array, data: Uint8Array) {
 	return connectionInfo;
 }
 
-export function parseButtonStatus(rawData: Uint8Array, data: Uint8Array) {
+export function parseButtonStatus(rawData: Uint8Array, data: string) {
 	const buttonStatus = {
 		_raw: rawData.slice(1, 3), // index 1,2
 		_hex: data.slice(1, 3),
@@ -223,10 +230,7 @@ export function parseButtonStatus(rawData: Uint8Array, data: Uint8Array) {
 	return buttonStatus;
 }
 
-export function parseCompleteButtonStatus(
-	rawData: Uint8Array,
-	data: Uint8Array,
-) {
+export function parseCompleteButtonStatus(rawData: Uint8Array, data: string) {
 	const buttonStatus = {
 		_raw: rawData.slice(3, 6), // index 3,4,5
 		_hex: data.slice(3, 6),
@@ -259,7 +263,7 @@ export function parseCompleteButtonStatus(
 	return buttonStatus;
 }
 
-export function parseAnalogStick(rawData: Uint8Array, data: Uint8Array) {
+export function parseAnalogStick(rawData: Uint8Array, data: string) {
 	const analogStick = {
 		_raw: rawData.slice(3, 4), // index 3
 		_hex: data.slice(3, 4),
@@ -267,7 +271,7 @@ export function parseAnalogStick(rawData: Uint8Array, data: Uint8Array) {
 	return analogStick;
 }
 
-export function parseAnalogStickLeft(rawData: Uint8Array, data: Uint8Array) {
+export function parseAnalogStickLeft(rawData: Uint8Array, data: string) {
 	let horizontal = rawData[6] | ((rawData[7] & 0xf) << 8);
 	horizontal = (horizontal / 1995 - 1) * 2;
 	let vertical = ((rawData[7] >> 4) | (rawData[8] << 4)) * -1;
@@ -281,7 +285,7 @@ export function parseAnalogStickLeft(rawData: Uint8Array, data: Uint8Array) {
 	return analogStickLeft;
 }
 
-export function parseAnalogStickRight(rawData: Uint8Array, data: Uint8Array) {
+export function parseAnalogStickRight(rawData: Uint8Array, data: string) {
 	let horizontal = rawData[9] | ((rawData[10] & 0xf) << 8);
 	horizontal = (horizontal / 1995 - 1) * 2;
 	let vertical = ((rawData[10] >> 4) | (rawData[11] << 4)) * -1;
@@ -295,7 +299,7 @@ export function parseAnalogStickRight(rawData: Uint8Array, data: Uint8Array) {
 	return analogStickRight;
 }
 
-export function parseFilter(rawData: Uint8Array, data: Uint8Array) {
+export function parseFilter(rawData: Uint8Array, data: string) {
 	const filter = {
 		_raw: rawData.slice(4), // index 4
 		_hex: data.slice(4),
@@ -303,7 +307,7 @@ export function parseFilter(rawData: Uint8Array, data: Uint8Array) {
 	return filter;
 }
 
-export function parseVibrator(rawData: Uint8Array, data: Uint8Array) {
+export function parseVibrator(rawData: Uint8Array, data: string) {
 	const vibrator = {
 		_raw: rawData.slice(12, 13), // index 12
 		_hex: data.slice(12, 13),
@@ -312,7 +316,7 @@ export function parseVibrator(rawData: Uint8Array, data: Uint8Array) {
 	return vibrator;
 }
 
-export function parseAck(rawData: Uint8Array, data: Uint8Array) {
+export function parseAck(rawData: Uint8Array, data: string) {
 	const ack = {
 		_raw: rawData.slice(13, 14), // index 13
 		_hex: data.slice(13, 14),
@@ -321,7 +325,7 @@ export function parseAck(rawData: Uint8Array, data: Uint8Array) {
 	return ack;
 }
 
-export function parseSubcommandID(rawData: Uint8Array, data: Uint8Array) {
+export function parseSubcommandID(rawData: Uint8Array, data: string) {
 	const subcommandID = {
 		_raw: rawData.slice(14, 15), // index 14
 		_hex: data.slice(14, 15),
@@ -330,10 +334,7 @@ export function parseSubcommandID(rawData: Uint8Array, data: Uint8Array) {
 	return subcommandID;
 }
 
-export function parseSubcommandReplyData(
-	rawData: Uint8Array,
-	data: Uint8Array,
-) {
+export function parseSubcommandReplyData(rawData: Uint8Array, data: string) {
 	const subcommandReplyData = {
 		_raw: rawData.slice(15), // index 15 ~
 		_hex: data.slice(15),
@@ -342,7 +343,10 @@ export function parseSubcommandReplyData(
 	return subcommandReplyData;
 }
 
-export function parseAccelerometers(rawData: Uint8Array, data: Uint8Array) {
+export function parseAccelerometers(
+	rawData: Uint8Array,
+	data: string,
+): AccelerometerData[] {
 	const accelerometers = [
 		{
 			x: {
@@ -400,7 +404,10 @@ export function parseAccelerometers(rawData: Uint8Array, data: Uint8Array) {
 	return accelerometers;
 }
 
-export function parseGyroscopes(rawData: Uint8Array, data: Uint8Array) {
+export function parseGyroscopes(
+	rawData: Uint8Array,
+	data: string,
+): PacketParserType[][] {
 	const gyroscopes = [
 		[
 			{
@@ -467,25 +474,25 @@ export function parseGyroscopes(rawData: Uint8Array, data: Uint8Array) {
 	return gyroscopes;
 }
 
-export function calculateActualAccelerometer(accelerometers) {
+export function calculateActualAccelerometer(accelerometers: number[][]) {
 	const elapsedTime = 0.005 * accelerometers.length; // Spent 5ms to collect each data.
 
 	const actualAccelerometer = {
 		x: Number.parseFloat(
-			(mean(accelerometers.map((g) => g[0])) * elapsedTime).toFixed(6),
+			(mean(accelerometers.map(([x]) => x)) * elapsedTime).toFixed(6),
 		),
 		y: Number.parseFloat(
-			(mean(accelerometers.map((g) => g[1])) * elapsedTime).toFixed(6),
+			(mean(accelerometers.map(([_, y]) => y)) * elapsedTime).toFixed(6),
 		),
 		z: Number.parseFloat(
-			(mean(accelerometers.map((g) => g[2])) * elapsedTime).toFixed(6),
+			(mean(accelerometers.map(([_, __, z]) => z)) * elapsedTime).toFixed(6),
 		),
 	};
 
 	return actualAccelerometer;
 }
 
-export function calculateActualGyroscope(gyroscopes) {
+export function calculateActualGyroscope(gyroscopes: number[][]) {
 	const elapsedTime = 0.005 * gyroscopes.length; // Spent 5ms to collect each data.
 
 	const actualGyroscopes = [
@@ -501,7 +508,7 @@ export function calculateActualGyroscope(gyroscopes) {
 	};
 }
 
-export function parseRingCon(rawData: Uint8Array, data: Uint8Array) {
+export function parseRingCon(rawData: Uint8Array, data: string) {
 	const ringcon = {
 		_raw: rawData.slice(38, 2),
 		_hex: data.slice(38, 2),

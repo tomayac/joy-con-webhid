@@ -55,12 +55,12 @@ export const connectRingCon = async (device: HIDDevice): Promise<void> => {
 	};
 
 	// eslint-disable-next-line no-unused-vars
-	const setInputReportModeTo0x30 = defineSendReportAsyncFunction({
-		subcommand: [0x03, 0x30],
-		expectedReport: {
-			14: 0x03,
-		},
-	});
+	// const setInputReportModeTo0x30 = defineSendReportAsyncFunction({
+	// 	subcommand: [0x03, 0x30],
+	// 	expectedReport: {
+	// 		14: 0x03,
+	// 	},
+	// });
 	const enablingMCUData221 = defineSendReportAsyncFunction({
 		subcommand: [0x22, 0x01],
 		expectedReport: {
