@@ -1,5 +1,6 @@
 import { connectRingCon } from "./connectRingCon.ts";
 import * as PacketParser from "./parse.ts";
+import type { PacketParserType } from "./types.ts";
 
 type JoyConLastValues = {
 	timestamp: number | null;
@@ -308,7 +309,7 @@ class JoyCon extends EventTarget {
 		const hexData = Array.from(data as Uint8Array).map((byte: number) =>
 			byte.toString(16),
 		);
-		let packet = {
+		let packet: { [key: string]: PacketParserType } = {
 			inputReportID: PacketParser.parseInputReportID(data, data),
 		};
 		switch (reportId) {

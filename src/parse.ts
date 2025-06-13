@@ -1,4 +1,5 @@
 import { Madgwick } from "./madgwick.ts";
+import type { PacketParserType } from "./types.ts";
 
 const leftMadgwick = Madgwick(10);
 const rightMadgwick = Madgwick(10);
@@ -199,7 +200,7 @@ export function parseTimer(rawData: Uint8Array, data: Uint8Array) {
 }
 
 export function parseBatteryLevel(rawData: Uint8Array, data: Uint8Array) {
-	const batteryLevel = {
+	const batteryLevel: PacketParserType = {
 		_raw: rawData.slice(2, 3), // high nibble
 		_hex: data.slice(2, 3),
 		level: calculateBatteryLevel(data.slice(2, 3)),

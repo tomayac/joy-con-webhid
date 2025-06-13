@@ -65,7 +65,11 @@ const connectJoyCon = async (): Promise<void> => {
 
 		await addDevice(device);
 	} catch (error) {
-		console.error(error.name, error.message);
+		if (error instanceof Error) {
+			console.error(error.name, error.message);
+		} else {
+			console.error(error);
+		}
 	}
 };
 
