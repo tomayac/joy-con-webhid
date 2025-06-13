@@ -38,7 +38,7 @@ class JoyCon extends EventTarget {
 		this.device.addEventListener("inputreport", this._onInputReport.bind(this));
 	}
 
-	async getRequestDeviceInfo(): Promise<any> {
+	async getRequestDeviceInfo() {
 		const outputReportID = 0x01;
 		const subcommand = [0x02];
 		const data = [
@@ -53,7 +53,8 @@ class JoyCon extends EventTarget {
 			0x00,
 			...subcommand,
 		];
-		const result = new Promise<any>((resolve) => {
+
+		const result = new Promise((resolve) => {
 			const onDeviceInfo = ({ detail: deviceInfo }: any) => {
 				this.removeEventListener("deviceinfo", onDeviceInfo);
 
@@ -61,13 +62,16 @@ class JoyCon extends EventTarget {
 
 				resolve(cleanDeviceInfo);
 			};
+
 			this.addEventListener("deviceinfo", onDeviceInfo);
 		});
+
 		await this.device.sendReport(outputReportID, new Uint8Array(data));
+
 		return result;
 	}
 
-	async getBatteryLevel(): Promise<any> {
+	async getBatteryLevel() {
 		const outputReportID = 0x01;
 		const subCommand = [0x50];
 		const data = [
@@ -82,7 +86,7 @@ class JoyCon extends EventTarget {
 			0x00,
 			...subCommand,
 		];
-		const result = new Promise<any>((resolve) => {
+		const result = new Promise((resolve) => {
 			const onBatteryLevel = ({ detail: batteryLevel }: any) => {
 				this.removeEventListener("batterylevel", onBatteryLevel);
 
@@ -205,7 +209,7 @@ class JoyCon extends EventTarget {
 	}
 
 	async enableRingCon(): Promise<void> {
-		await connectRingCon(this.device as any);
+		await connectRingCon(this.device);
 	}
 
 	async enableUSBHIDJoystickReport(): Promise<void> {
@@ -304,7 +308,7 @@ class JoyCon extends EventTarget {
 		const hexData = Array.from(data as Uint8Array).map((byte: number) =>
 			byte.toString(16),
 		);
-		let packet: any = {
+		let packet = {
 			inputReportID: PacketParser.parseInputReportID(data, data),
 		};
 		switch (reportId) {
@@ -367,31 +371,33 @@ class JoyCon extends EventTarget {
 }
 
 class JoyConLeft extends JoyCon {
-	_receiveInputEvent(packet: any): void {
-		delete packet.buttonStatus.x;
-		delete packet.buttonStatus.y;
-		delete packet.buttonStatus.b;
-		delete packet.buttonStatus.a;
-		delete packet.buttonStatus.plus;
-		delete packet.buttonStatus.r;
-		delete packet.buttonStatus.zr;
-		delete packet.buttonStatus.home;
-		delete packet.buttonStatus.rightStick;
+	_receiveInputEvent(packet: Record<string, unknown>): void {
+		const buttonStatus = packet.buttonStatus as { [key: string]: unknown };
+		buttonStatus.x = undefined;
+		buttonStatus.y = undefined;
+		buttonStatus.b = undefined;
+		buttonStatus.a = undefined;
+		buttonStatus.plus = undefined;
+		buttonStatus.r = undefined;
+		buttonStatus.zr = undefined;
+		buttonStatus.home = undefined;
+		buttonStatus.rightStick = undefined;
 		this.dispatchEvent(new CustomEvent("hidinput", { detail: packet }));
 	}
 }
 
 class JoyConRight extends JoyCon {
-	_receiveInputEvent(packet: any): void {
-		delete packet.buttonStatus.up;
-		delete packet.buttonStatus.down;
-		delete packet.buttonStatus.left;
-		delete packet.buttonStatus.right;
-		delete packet.buttonStatus.minus;
-		delete packet.buttonStatus.l;
-		delete packet.buttonStatus.zl;
-		delete packet.buttonStatus.capture;
-		delete packet.buttonStatus.leftStick;
+	_receiveInputEvent(packet: Record<string, unknown>): void {
+		const buttonStatus = packet.buttonStatus as { [key: string]: unknown };
+		buttonStatus.up = undefined;
+		buttonStatus.down = undefined;
+		buttonStatus.left = undefined;
+		buttonStatus.right = undefined;
+		buttonStatus.minus = undefined;
+		buttonStatus.l = undefined;
+		buttonStatus.zl = undefined;
+		buttonStatus.capture = undefined;
+		buttonStatus.leftStick = undefined;
 		this.dispatchEvent(new CustomEvent("hidinput", { detail: packet }));
 	}
 }
