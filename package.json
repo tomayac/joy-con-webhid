@@ -10,6 +10,7 @@
 		"controller"
 	],
 	"scripts": {
+		"server": "npx vite",
 		"start": "npx http-server",
 		"check": "npx @biomejs/biome check --write ./src/*.ts",
 		"build": "npx tsc && npx vite build",
