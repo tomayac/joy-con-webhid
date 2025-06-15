@@ -28,7 +28,7 @@ const visualize = (joyCon, packet) => {
     ringCon,
   } = packet;
 
-  console.log(buttons.x, buttons.y, buttons.a, buttons.b);
+  // console.log(buttons.x, buttons.y, buttons.a, buttons.b);
 
   if (joyCon instanceof JoyConLeft) {
     rootStyle.setProperty('--left-alpha', `${orientation.alpha}deg`);
@@ -139,13 +139,14 @@ const visualize = (joyCon, packet) => {
 // Joy-Cons may sleep until touched, so attach the listener dynamically.
 setInterval(async () => {
   for (const joyCon of connectedJoyCons.values()) {
+    console.log(joyCon.eventListenerAttached);
     if (joyCon.eventListenerAttached) {
       continue;
     }
     joyCon.eventListenerAttached = true;
     await joyCon.enableVibration();
-    joyCon.addEventListener('hidinput', (event) => {
-      console.log('hidinput', event.actualOrientation);
+    joyCon.on('hidinput', (event) => {
+      console.log('hidinput', event);
       visualize(joyCon, event.detail);
     });
 

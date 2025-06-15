@@ -92,3 +92,9 @@ export interface SendReportAsyncFunctionOptions {
 	expectedReport: Record<number, number>;
 	timeoutErrorMessage?: string;
 }
+
+export type JoyConEvents = {
+	hidinput: CustomEvent<{ detail: PacketType }>;
+	deviceinfo: CustomEvent<{ detail: PacketType }>;
+	batterylevel: CustomEvent<{ detail: PacketType }>;
+};

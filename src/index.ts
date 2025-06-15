@@ -1,4 +1,25 @@
-import { GeneralController, JoyConLeft, JoyConRight } from "./joycon.js";
+import { GeneralController, JoyConLeft, JoyConRight } from "./joycon.ts";
+
+const connectDevice = async (
+	device: HIDDevice,
+): Promise<JoyConLeft | JoyConRight | GeneralController> => {
+	let joyCon: JoyConLeft | JoyConRight | GeneralController | null = null;
+	if (device.productId === 0x2006) {
+		joyCon = new JoyConLeft(device);
+	} else if (device.productId === 0x2007) {
+		if (device.productName === "Joy-Con (R)") {
+			joyCon = new JoyConRight(device);
+		}
+	}
+	if (!joyCon) {
+		joyCon = new GeneralController(device); // for other controllers
+	}
+	await joyCon.open();
+	await joyCon.enableUSBHIDJoystickReport();
+	await joyCon.enableStandardFullMode();
+	await joyCon.enableIMUMode();
+	return joyCon;
+};
 
 const connectedJoyCons = new Map<
 	number,
@@ -72,28 +93,6 @@ const connectJoyCon = async (): Promise<void> => {
 		}
 	}
 };
-
-const connectDevice = async (
-	device: HIDDevice,
-): Promise<JoyConLeft | JoyConRight | GeneralController> => {
-	let joyCon: JoyConLeft | JoyConRight | GeneralController | null = null;
-	if (device.productId === 0x2006) {
-		joyCon = new JoyConLeft(device);
-	} else if (device.productId === 0x2007) {
-		if (device.productName === "Joy-Con (R)") {
-			joyCon = new JoyConRight(device);
-		}
-	}
-	if (!joyCon) {
-		joyCon = new GeneralController(device); // for other controllers
-	}
-	await joyCon.open();
-	await joyCon.enableUSBHIDJoystickReport();
-	await joyCon.enableStandardFullMode();
-	await joyCon.enableIMUMode();
-	return joyCon;
-};
-
 export {
 	connectJoyCon,
 	connectedJoyCons,

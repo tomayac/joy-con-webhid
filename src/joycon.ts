@@ -1,17 +1,10 @@
-import * as PacketParser from "./parse.js";
-import { connectRingCon } from "./connectRingCon.js";
-import type { JoyConLastValues, PacketType } from "./types.js";
-
-function concatTypedArrays<T extends Uint8Array>(a: T, b: T): T {
-	const c = new (Object.getPrototypeOf(a).constructor)(
-		a.length + b.length,
-	) as T;
-	c.set(a, 0);
-	c.set(b, a.length);
-	return c;
-}
+import * as PacketParser from "./parse.ts";
+import { connectRingCon } from "./connectRingCon.ts";
+import type { JoyConEvents, JoyConLastValues, PacketType } from "./types.ts";
+import { concatTypedArrays } from "./utils.ts";
 
 class JoyCon extends EventTarget {
+	eventListenerAttached = false;
 	device: HIDDevice;
 	lastValues: JoyConLastValues;
 	ledstate = 0;
@@ -25,6 +18,17 @@ class JoyCon extends EventTarget {
 			beta: 0,
 			gamma: 0,
 		};
+	}
+
+	/**
+	 * Type-safe event listener for JoyCon custom events.
+	 */
+	on<K extends keyof JoyConEvents>(
+		type: K,
+		listener: (this: JoyCon, ev: JoyConEvents[K]) => void,
+		options?: boolean | AddEventListenerOptions,
+	): void {
+		super.addEventListener(type, listener as EventListener, options);
 	}
 
 	async open(): Promise<void> {
@@ -51,15 +55,15 @@ class JoyCon extends EventTarget {
 		];
 		const result = new Promise((resolve) => {
 			const onDeviceInfo = ({ detail: deviceInfo }: CustomEvent) => {
-				this.removeEventListener("deviceinfo", onDeviceInfo as EventListener);
-				// Remove _raw and _hex for cleaner output
 				const { _raw, _hex, ...cleanDeviceInfo } = deviceInfo as Record<
 					string,
 					unknown
 				>;
 				resolve(cleanDeviceInfo);
 			};
-			this.addEventListener("deviceinfo", onDeviceInfo as EventListener);
+			this.addEventListener("deviceinfo", onDeviceInfo as EventListener, {
+				once: true,
+			});
 		});
 		await this.device.sendReport(outputReportID, new Uint8Array(data));
 		return result;
@@ -82,17 +86,15 @@ class JoyCon extends EventTarget {
 		];
 		const result = new Promise((resolve) => {
 			const onBatteryLevel = ({ detail: batteryLevel }: CustomEvent) => {
-				this.removeEventListener(
-					"batterylevel",
-					onBatteryLevel as EventListener,
-				);
 				const { _raw, _hex, ...cleanBatteryLevel } = batteryLevel as Record<
 					string,
 					unknown
 				>;
 				resolve(cleanBatteryLevel);
 			};
-			this.addEventListener("batterylevel", onBatteryLevel as EventListener);
+			this.addEventListener("batterylevel", onBatteryLevel as EventListener, {
+				once: true,
+			});
 		});
 		await this.device.sendReport(outputReportID, new Uint8Array(data));
 		return result;
