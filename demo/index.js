@@ -4,7 +4,7 @@ import {
   JoyConLeft,
   JoyConRight,
   GeneralController,
-} from '../dist/joy-con-webhid.es.js';
+} from './joy-con-webhid.es.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
 const connectButtonRingCon = document.querySelector('#connect-ring-con');

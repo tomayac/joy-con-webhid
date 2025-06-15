@@ -6,10 +6,9 @@ import dts from "vite-plugin-dts";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-	root: "demo", // Set demo as the root for Vite dev server
 	plugins: [
 		dts({
-			entryRoot: "dist",
+			entryRoot: "./src",
 		}),
 	],
 	build: {
