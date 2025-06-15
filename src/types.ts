@@ -94,7 +94,7 @@ export interface SendReportAsyncFunctionOptions {
 }
 
 export type JoyConEvents = {
-	hidinput: CustomEvent<{ detail: PacketType }>;
-	deviceinfo: CustomEvent<{ detail: PacketType }>;
-	batterylevel: CustomEvent<{ detail: PacketType }>;
+	hidinput: CustomEvent<PacketType>;
+	deviceinfo: CustomEvent<PacketType>;
+	batterylevel: CustomEvent<PacketType>;
 };
