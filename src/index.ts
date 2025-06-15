@@ -1,4 +1,5 @@
 import { GeneralController, JoyConLeft, JoyConRight } from "./joycon.ts";
+export * from "./types.ts";
 
 const connectDevice = async (
 	device: HIDDevice,
