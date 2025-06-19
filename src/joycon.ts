@@ -1,14 +1,19 @@
 import { connectRingCon } from "./connectRingCon.ts";
+import { Madgwick } from "./madgwick.ts";
 import * as PacketParser from "./parse.ts";
 import type {
 	JoyConDataPacket,
 	JoyConEvents,
 	JoyConLastValues,
+	Madgwick as MadgwickType,
+	Quaternion,
 } from "./types.ts";
 import { concatTypedArrays } from "./utils.ts";
 
 class JoyCon extends EventTarget {
 	eventListenerAttached = false;
+	quaternion!: Quaternion;
+	madgwick!: MadgwickType;
 	device: HIDDevice;
 	lastValues: JoyConLastValues;
 	ledstate = 0;
@@ -30,6 +35,14 @@ class JoyCon extends EventTarget {
 			beta: 0,
 			gamma: 0,
 		};
+
+		if (device.productId === 0x2006) {
+			this.madgwick = Madgwick(10);
+			this.quaternion = this.madgwick.getQuaternion();
+		} else if (device.productId === 0x2007) {
+			this.madgwick = Madgwick(10);
+			this.quaternion = this.madgwick.getQuaternion();
+		}
 	}
 
 	/**
@@ -61,6 +74,7 @@ class JoyCon extends EventTarget {
 		if (!this.device.opened) {
 			await this.device.open();
 		}
+
 		this.device.addEventListener("inputreport", this._onInputReport.bind(this));
 	}
 
@@ -579,11 +593,9 @@ class JoyCon extends EventTarget {
 							a.z.acc ?? 0,
 						]),
 					);
-					const quaternion = PacketParser.toQuaternion(
-						rps,
-						acc,
-						device.productId,
-					);
+
+					this.madgwick.update(rps.x, rps.y, rps.z, acc.x, acc.y, acc.z);
+
 					packet = {
 						...packet,
 						accelerometers: accelerometers,
@@ -596,9 +608,10 @@ class JoyCon extends EventTarget {
 							acc,
 							device.productId,
 						),
-						actualOrientationQuaternion:
-							PacketParser.toEulerAnglesQuaternion(quaternion),
-						quaternion: quaternion,
+						actualOrientationQuaternion: PacketParser.toEulerAnglesQuaternion(
+							this.quaternion,
+						),
+						quaternion: this.quaternion,
 						ringCon: PacketParser.parseRingCon(fullData, hexData),
 					};
 				}

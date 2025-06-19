@@ -5,7 +5,12 @@
 // Implementation of Madgwick's IMU and AHRS algorithms.
 // See: http://www.x-io.co.uk/node/8#open_source_ahrs_and_imu_algorithms
 //= ====================================================================================================
-import type { EulerAngles, MadgwickOptions, Quaternion } from "./types.ts";
+import type {
+	EulerAngles,
+	Madgwick as MadgwickType,
+	MadgwickOptions,
+	Quaternion,
+} from "./types.ts";
 
 /**
  * Implements the Madgwick sensor fusion algorithm for Attitude and Heading Reference Systems (AHRS).
@@ -35,7 +40,10 @@ import type { EulerAngles, MadgwickOptions, Quaternion } from "./types.ts";
  *
  * @see https://x-io.co.uk/open-source-imu-and-ahrs-algorithms/
  */
-export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
+export function Madgwick(
+	sampleInterval: number,
+	options?: MadgwickOptions,
+): MadgwickType {
 	const sampleFreq = 1000 / sampleInterval; // sample frequency in Hz
 	const beta = options?.beta ?? 0.4; // 2 * proportional gain
 	let initialised = !(options?.doInitialisation === true);

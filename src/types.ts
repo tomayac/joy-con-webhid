@@ -98,3 +98,27 @@ export type JoyConEvents = {
 	deviceinfo: CustomEvent<JoyConDataPacket>;
 	batterylevel: CustomEvent<JoyConDataPacket>;
 };
+
+export type Madgwick = {
+	update: (
+		gx: number,
+		gy: number,
+		gz: number,
+		ax: number,
+		ay: number,
+		az: number,
+		mx?: number,
+		my?: number,
+		mz?: number,
+		deltaTimeSec?: number,
+	) => void;
+	init: (
+		ax: number,
+		ay: number,
+		az: number,
+		mx: number,
+		my: number,
+		mz: number,
+	) => void;
+	getQuaternion(): Quaternion;
+};
