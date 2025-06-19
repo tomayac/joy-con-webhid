@@ -340,7 +340,7 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 	): void {
 		recipSampleFreq = deltaTimeSec ?? recipSampleFreq;
 
-		if (!initalised) {
+		if (!initialised) {
 			init(ax, ay, az, mx ?? 0, my ?? 0, mz ?? 0);
 		}
 
