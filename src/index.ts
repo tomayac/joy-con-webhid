@@ -1,5 +1,5 @@
-import { GeneralController, JoyConLeft, JoyConRight } from "./joycon.ts";
-export * from "./types.ts";
+import { GeneralController, JoyConLeft, JoyConRight } from './joycon.ts';
+export * from './types.ts';
 
 /**
  * Connects to a HID device and initializes it as a Joy-Con controller or general controller.
@@ -25,29 +25,29 @@ export * from "./types.ts";
  * ```
  */
 const connectDevice = async (
-	device: HIDDevice,
+  device: HIDDevice
 ): Promise<JoyConLeft | JoyConRight | GeneralController> => {
-	let joyCon: JoyConLeft | JoyConRight | GeneralController | null = null;
-	if (device.productId === 0x2006) {
-		joyCon = new JoyConLeft(device);
-	} else if (device.productId === 0x2007) {
-		if (device.productName === "Joy-Con (R)") {
-			joyCon = new JoyConRight(device);
-		}
-	}
-	if (!joyCon) {
-		joyCon = new GeneralController(device); // for other controllers
-	}
-	await joyCon.open();
-	await joyCon.enableUSBHIDJoystickReport();
-	await joyCon.enableStandardFullMode();
-	await joyCon.enableIMUMode();
-	return joyCon;
+  let joyCon: JoyConLeft | JoyConRight | GeneralController | null = null;
+  if (device.productId === 0x2006) {
+    joyCon = new JoyConLeft(device);
+  } else if (device.productId === 0x2007) {
+    if (device.productName === 'Joy-Con (R)') {
+      joyCon = new JoyConRight(device);
+    }
+  }
+  if (!joyCon) {
+    joyCon = new GeneralController(device); // for other controllers
+  }
+  await joyCon.open();
+  await joyCon.enableUSBHIDJoystickReport();
+  await joyCon.enableStandardFullMode();
+  await joyCon.enableIMUMode();
+  return joyCon;
 };
 
 const connectedJoyCons = new Map<
-	number,
-	JoyConLeft | JoyConRight | GeneralController
+  number,
+  JoyConLeft | JoyConRight | GeneralController
 >();
 const devices: HIDDevice[] = [];
 
@@ -60,12 +60,12 @@ const devices: HIDDevice[] = [];
  * @returns The index of the device in the `devices` array, used as its unique ID.
  */
 const getDeviceID = (device: HIDDevice): number => {
-	const n = devices.indexOf(device);
-	if (n >= 0) {
-		return n;
-	}
-	devices.push(device);
-	return devices.length - 1;
+  const n = devices.indexOf(device);
+  if (n >= 0) {
+    return n;
+  }
+  devices.push(device);
+  return devices.length - 1;
 };
 
 /**
@@ -78,11 +78,11 @@ const getDeviceID = (device: HIDDevice): number => {
  * @returns A promise that resolves when the device has been connected and added.
  */
 const addDevice = async (device: HIDDevice) => {
-	const id = getDeviceID(device);
-	console.log(
-		`HID connected: ${id} ${device.productId.toString(16)} ${device.productName}`,
-	);
-	connectedJoyCons.set(id, await connectDevice(device));
+  const id = getDeviceID(device);
+  console.log(
+    `HID connected: ${id} ${device.productId.toString(16)} ${device.productName}`
+  );
+  connectedJoyCons.set(id, await connectDevice(device));
 };
 
 /**
@@ -97,27 +97,27 @@ const addDevice = async (device: HIDDevice) => {
  * from the connectedJoyCons collection.
  */
 const removeDevice = async (device: HIDDevice) => {
-	const id = getDeviceID(device);
-	console.log(
-		`HID disconnected: ${id} ${device.productId.toString(16)} ${device.productName}`,
-	);
-	connectedJoyCons.delete(id);
+  const id = getDeviceID(device);
+  console.log(
+    `HID disconnected: ${id} ${device.productId.toString(16)} ${device.productName}`
+  );
+  connectedJoyCons.delete(id);
 };
 
-navigator.hid.addEventListener("connect", async ({ device }) => {
-	addDevice(device);
+navigator.hid.addEventListener('connect', async ({ device }) => {
+  addDevice(device);
 });
 
-navigator.hid.addEventListener("disconnect", ({ device }) => {
-	removeDevice(device);
+navigator.hid.addEventListener('disconnect', ({ device }) => {
+  removeDevice(device);
 });
 
-document.addEventListener("DOMContentLoaded", async () => {
-	const devices = await navigator.hid.getDevices();
+document.addEventListener('DOMContentLoaded', async () => {
+  const devices = await navigator.hid.getDevices();
 
-	for (const device of devices) {
-		await addDevice(device);
-	}
+  for (const device of devices) {
+    await addDevice(device);
+  }
 });
 
 /**
@@ -139,35 +139,35 @@ document.addEventListener("DOMContentLoaded", async () => {
  * ```
  */
 const connectJoyCon = async (): Promise<void> => {
-	// Filter on devices with the Nintendo Vendor ID.
-	const filters = [
-		{
-			vendorId: 0x057e, // Nintendo Co., Ltd
-		},
-	];
+  // Filter on devices with the Nintendo Vendor ID.
+  const filters = [
+    {
+      vendorId: 0x057e, // Nintendo Co., Ltd
+    },
+  ];
 
-	// Prompt user to select a Joy-Con device.
-	try {
-		const [chosenDevice] = await navigator.hid.requestDevice({ filters });
+  // Prompt user to select a Joy-Con device.
+  try {
+    const [chosenDevice] = await navigator.hid.requestDevice({ filters });
 
-		if (!chosenDevice) {
-			return;
-		}
+    if (!chosenDevice) {
+      return;
+    }
 
-		await addDevice(chosenDevice);
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error(error.name, error.message);
-		} else {
-			console.error(error);
-		}
-	}
+    await addDevice(chosenDevice);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.name, error.message);
+    } else {
+      console.error(error);
+    }
+  }
 };
 
 export {
-	connectJoyCon,
-	connectedJoyCons,
-	JoyConLeft,
-	JoyConRight,
-	GeneralController,
+  connectJoyCon,
+  connectedJoyCons,
+  JoyConLeft,
+  JoyConRight,
+  GeneralController,
 };

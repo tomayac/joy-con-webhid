@@ -1,46 +1,54 @@
 {
-	"name": "joy-con-webhid",
-	"version": "0.7.0",
-	"description": "Joy-Con over WebHID ",
-	"type": "module",
-	"keywords": [
-		"joycon",
-		"webhid",
-		"gamepad",
-		"controller"
-	],
-	"scripts": {
-		"server": "cp dist/joy-con-webhid.es.js demo; npx http-server demo",
-		"start": "npx http-server",
-		"check": "npx @biomejs/biome check --write ./src/*.ts",
-		"build": "npx tsc && npx vite build"
-	},
-	"exports": {
-		".": {
-			"import": "./dist/joy-con-webhid.es.js",
-			"types": "./dist/index.d.ts"
-		}
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/tomayac/joy-con-webhid.git"
-	},
-	"author": "Thomas Steiner (tomac@google.com)",
-	"license": "Apache-2.0",
-	"bugs": {
-		"url": "https://github.com/tomayac/joy-con-webhid/issues"
-	},
-	"homepage": "https://github.com/tomayac/joy-con-webhid#readme",
-	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@types/node": "^24.0.1",
-		"@types/w3c-web-hid": "^1.0.6",
-		"http-server": "^14.1.1",
-		"typescript": "^5.8.3",
-		"vite": "^6.3.5",
-		"vite-plugin-dts": "^4.5.4"
-	},
-	"dependencies": {
-		"ahrs": "^1.3.2"
-	}
+  "name": "joy-con-webhid",
+  "version": "0.7.0",
+  "description": "Joy-Con over WebHID ",
+  "type": "module",
+  "keywords": [
+    "joycon",
+    "webhid",
+    "gamepad",
+    "controller"
+  ],
+  "scripts": {
+    "server": "cp dist/joy-con-webhid.es.js demo; npx http-server demo",
+    "start": "npx http-server",
+    "lint": "npx eslint . --ext .ts,.js,.mjs --fix --ignore-pattern dist/ --ignore-pattern src/madgwick.ts",
+    "prepare": "npm run lint && npm run fix && npm run build && npm run copyDeps",
+    "fix": "npx prettier --write .",
+    "build": "npx tsc && npx vite build"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/joy-con-webhid.es.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomayac/joy-con-webhid.git"
+  },
+  "author": "Thomas Steiner (tomac@google.com)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tomayac/joy-con-webhid/issues"
+  },
+  "homepage": "https://github.com/tomayac/joy-con-webhid#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@types/node": "^24.0.1",
+    "@types/w3c-web-hid": "^1.0.6",
+    "eslint": "^8.47.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^10.1.5",
+    "globals": "^16.2.0",
+    "http-server": "^14.1.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.1",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "dependencies": {
+    "ahrs": "^1.3.2"
+  }
 }
