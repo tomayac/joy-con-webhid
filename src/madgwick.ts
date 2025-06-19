@@ -38,7 +38,7 @@ import type { EulerAngles, MadgwickOptions, Quaternion } from "./types.ts";
 export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 	const sampleFreq = 1000 / sampleInterval; // sample frequency in Hz
 	const beta = options?.beta ?? 0.4; // 2 * proportional gain
-	let initalised = !(options?.doInitialisation === true);
+	let initialised = !(options?.doInitialisation === true);
 
 	let q0 = 1.0; // quaternion of sensor frame relative to auxiliary frame
 	let q1 = 0.0;
