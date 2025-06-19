@@ -1,49 +1,49 @@
-export type PacketParserType = {
+export type ParsedPacketData = {
 	_raw: Uint8Array<ArrayBuffer>;
 	_hex: string | Uint8Array<ArrayBuffer>;
-	dps?: number;
-	rps?: number;
-	acc?: number;
-	level?: string;
-	type?: string;
-	strain?: number;
+	dps: number;
+	rps: number;
+	acc: number;
+	level: string;
+	type: string;
+	strain: number;
 };
 
 export type AccelerometerData = {
-	x: PacketParserType;
-	y: PacketParserType;
-	z: PacketParserType;
+	x: Partial<ParsedPacketData>;
+	y: Partial<ParsedPacketData>;
+	z: Partial<ParsedPacketData>;
 };
 
 export type JoyConLastValues = {
-	timestamp?: number;
+	timestamp: number | null;
 	alpha: number;
 	beta: number;
 	gamma: number;
 };
 
-export type PacketType = {
-	inputReportID: PacketParserType;
-	buttonStatus: PacketParserType;
-	analogStick: PacketParserType;
-	filter: PacketParserType;
-	timer: PacketParserType;
-	batteryLevel: PacketParserType;
-	connectionInfo: PacketParserType;
-	analogStickLeft: PacketParserType;
-	analogStickRight: PacketParserType;
-	vibrator: PacketParserType;
-	ack: PacketParserType;
-	subcommandID: PacketParserType;
-	subcommandReplyData: PacketParserType;
-	deviceInfo: PacketParserType;
+export type JoyConDataPacket = {
+	inputReportID: Partial<ParsedPacketData>;
+	buttonStatus: Partial<ParsedPacketData>;
+	analogStick: Partial<ParsedPacketData>;
+	filter: Partial<ParsedPacketData>;
+	timer: Partial<ParsedPacketData>;
+	batteryLevel: Partial<ParsedPacketData>;
+	connectionInfo: Partial<ParsedPacketData>;
+	analogStickLeft: Partial<ParsedPacketData>;
+	analogStickRight: Partial<ParsedPacketData>;
+	vibrator: Partial<ParsedPacketData>;
+	ack: Partial<ParsedPacketData>;
+	subcommandID: Partial<ParsedPacketData>;
+	subcommandReplyData: Partial<ParsedPacketData>;
+	deviceInfo: Partial<ParsedPacketData>;
 	accelerometers: AccelerometerData[];
 	actualAccelerometer: {
 		x: number;
 		y: number;
 		z: number;
 	};
-	gyroscopes: PacketParserType[][];
+	gyroscopes: Partial<ParsedPacketData>[][];
 	actualGyroscope: {
 		dps: {
 			x: number;
@@ -67,7 +67,7 @@ export type PacketType = {
 		gamma: string;
 	};
 	quaternion: Quaternion;
-	ringCon: PacketParserType;
+	ringCon: Partial<ParsedPacketData>;
 };
 
 export type Gyroscope = { x: number; y: number; z: number };
@@ -83,8 +83,8 @@ export interface EulerAngles {
 }
 
 export interface MadgwickOptions {
-	beta?: number;
-	doInitialisation?: boolean;
+	beta: number;
+	doInitialisation: boolean;
 }
 
 export interface SendReportAsyncFunctionOptions {
@@ -94,7 +94,7 @@ export interface SendReportAsyncFunctionOptions {
 }
 
 export type JoyConEvents = {
-	hidinput: CustomEvent<PacketType>;
-	deviceinfo: CustomEvent<PacketType>;
-	batterylevel: CustomEvent<PacketType>;
+	hidinput: CustomEvent<JoyConDataPacket>;
+	deviceinfo: CustomEvent<JoyConDataPacket>;
+	batterylevel: CustomEvent<JoyConDataPacket>;
 };

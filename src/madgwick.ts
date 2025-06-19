@@ -7,28 +7,66 @@
 //= ====================================================================================================
 import type { EulerAngles, MadgwickOptions, Quaternion } from "./types.ts";
 
+/**
+ * Implements the Madgwick sensor fusion algorithm for Attitude and Heading Reference Systems (AHRS).
+ * This function returns an object that maintains the internal state of the filter and provides methods
+ * to update the orientation estimate using gyroscope, accelerometer, and optionally magnetometer data.
+ *
+ * @param sampleInterval - The sample interval in milliseconds between sensor readings.
+ * @param options - Optional configuration for the Madgwick filter.
+ * @param options.beta - The algorithm gain (default is 0.4).
+ * @param options.doInitialisation - If true, the filter will perform initialisation on the first update.
+ *
+ * @returns An object with the following methods:
+ * - `update(gx, gy, gz, ax, ay, az, mx?, my?, mz?, deltaTimeSec?)`: Updates the filter state with new sensor data.
+ *   - `gx`, `gy`, `gz`: Gyroscope readings in radians per second.
+ *   - `ax`, `ay`, `az`: Accelerometer readings (normalized or in any consistent unit).
+ *   - `mx`, `my`, `mz`: (Optional) Magnetometer readings (normalized or in any consistent unit).
+ *   - `deltaTimeSec`: (Optional) Time step in seconds for this update; overrides the default sample interval.
+ * - `init(ax, ay, az, mx, my, mz)`: Initializes the filter state using accelerometer and magnetometer data.
+ * - `getQuaternion()`: Returns the current orientation as a quaternion `{ w, x, y, z }`.
+ *
+ * @example
+ * ```typescript
+ * const madgwick = Madgwick(10, { beta: 0.1 });
+ * madgwick.update(gx, gy, gz, ax, ay, az, mx, my, mz);
+ * const orientation = madgwick.getQuaternion();
+ * ```
+ *
+ * @see https://x-io.co.uk/open-source-imu-and-ahrs-algorithms/
+ */
 export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
-	//---------------------------------------------------------------------------------------------------
-	// Definitions
-
-	const opts = options || {};
 	const sampleFreq = 1000 / sampleInterval; // sample frequency in Hz
-	const beta = opts.beta ?? 0.4; // 2 * proportional gain
-	let initalised = !(opts.doInitialisation === true);
+	const beta = options?.beta ?? 0.4; // 2 * proportional gain
+	let initalised = !(options?.doInitialisation === true);
 
-	//---------------------------------------------------------------------------------------------------
-	// Variable definitions
 	let q0 = 1.0; // quaternion of sensor frame relative to auxiliary frame
 	let q1 = 0.0;
 	let q2 = 0.0;
 	let q3 = 0.0;
 	let recipSampleFreq = 1.0 / sampleFreq;
 
-	//= ===================================================================================================
-	// Functions
-
-	//---------------------------------------------------------------------------------------------------
-	// IMU algorithm update
+	/**
+	 * Updates the orientation quaternion using the Madgwick AHRS (Attitude and Heading Reference System) algorithm,
+	 * based on gyroscope and accelerometer measurements. This function implements the IMU (Inertial Measurement Unit)
+	 * update step, which does not require magnetometer data.
+	 *
+	 * The algorithm fuses gyroscope and accelerometer data to estimate the orientation of the sensor in 3D space.
+	 * It applies a gradient descent algorithm to minimize the error between measured and estimated direction of gravity.
+	 *
+	 * @param gx - Gyroscope X-axis angular velocity (in radians per second).
+	 * @param gy - Gyroscope Y-axis angular velocity (in radians per second).
+	 * @param gz - Gyroscope Z-axis angular velocity (in radians per second).
+	 * @param ax - Accelerometer X-axis acceleration (in any consistent unit, typically m/s²).
+	 * @param ay - Accelerometer Y-axis acceleration (in any consistent unit, typically m/s²).
+	 * @param az - Accelerometer Z-axis acceleration (in any consistent unit, typically m/s²).
+	 *
+	 * @remarks
+	 * - This function updates the global quaternion variables (`q0`, `q1`, `q2`, `q3`) representing orientation.
+	 * - The `beta` and `recipSampleFreq` variables must be defined in the containing scope.
+	 * - Accelerometer measurements must not all be zero for the feedback step to be applied.
+	 * - The quaternion is normalized after each update to ensure valid rotation representation.
+	 */
 	function madgwickAHRSUpdateIMU(
 		gx: number,
 		gy: number,
@@ -137,6 +175,17 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 		q3 *= recipNorm;
 	}
 
+	/**
+	 * Computes the cross product of two 3D vectors (a × b).
+	 *
+	 * @param ax - The x component of the first vector.
+	 * @param ay - The y component of the first vector.
+	 * @param az - The z component of the first vector.
+	 * @param bx - The x component of the second vector.
+	 * @param by - The y component of the second vector.
+	 * @param bz - The z component of the second vector.
+	 * @returns An object representing the resulting vector with properties x, y, and z.
+	 */
 	function cross_product(
 		ax: number,
 		ay: number,
@@ -152,6 +201,23 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 		};
 	}
 
+	/**
+	 * Calculates Euler angles (heading, pitch, and roll) in radians from IMU sensor data.
+	 *
+	 * This function takes accelerometer and magnetometer readings and computes the
+	 * corresponding Euler angles. The angles are calculated as follows:
+	 * - `pitch`: Derived from the accelerometer's X, Y, and Z axes.
+	 * - `roll`: Calculated using cross products of the accelerometer vector and a reference vector.
+	 * - `heading`: Computed from the magnetometer readings, adjusted by the calculated pitch and roll.
+	 *
+	 * @param ax - Accelerometer X-axis reading.
+	 * @param ay - Accelerometer Y-axis reading.
+	 * @param az - Accelerometer Z-axis reading.
+	 * @param mx - Magnetometer X-axis reading.
+	 * @param my - Magnetometer Y-axis reading.
+	 * @param mz - Magnetometer Z-axis reading.
+	 * @returns An object containing the Euler angles: `heading`, `pitch`, and `roll` (all in radians).
+	 */
 	function eulerAnglesFromImuRad(
 		ax: number,
 		ay: number,
@@ -181,6 +247,12 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 		};
 	}
 
+	/**
+	 * Converts Euler angles (heading, pitch, roll) to a quaternion representation.
+	 *
+	 * @param eulerAngles - The Euler angles to convert, containing heading, pitch, and roll in radians.
+	 * @returns A quaternion representing the same orientation as the provided Euler angles.
+	 */
 	function toQuaternion(eulerAngles: EulerAngles): Quaternion {
 		const cy = Math.cos(eulerAngles.heading * 0.5);
 		const sy = Math.sin(eulerAngles.heading * 0.5);
@@ -197,6 +269,20 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 		};
 	}
 
+	/**
+	 * Initializes the orientation quaternion using accelerometer and magnetometer data.
+	 *
+	 * @param ax - Acceleration along the X-axis (in m/s² or g).
+	 * @param ay - Acceleration along the Y-axis (in m/s² or g).
+	 * @param az - Acceleration along the Z-axis (in m/s² or g).
+	 * @param mx - Magnetic field along the X-axis.
+	 * @param my - Magnetic field along the Y-axis.
+	 * @param mz - Magnetic field along the Z-axis.
+	 *
+	 * This function computes the initial orientation quaternion from the provided
+	 * accelerometer and magnetometer readings, normalizes it, and sets the internal
+	 * state as initialized.
+	 */
 	function init(
 		ax: number,
 		ay: number,
@@ -219,8 +305,27 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 		initalised = true;
 	}
 
-	//---------------------------------------------------------------------------------------------------
-	// AHRS algorithm update
+	/**
+	 * Updates the orientation quaternion using the Madgwick AHRS (Attitude and Heading Reference System) algorithm.
+	 * This function fuses gyroscope, accelerometer, and (optionally) magnetometer data to estimate orientation.
+	 *
+	 * @param gx - Gyroscope X axis measurement in radians/sec.
+	 * @param gy - Gyroscope Y axis measurement in radians/sec.
+	 * @param gz - Gyroscope Z axis measurement in radians/sec.
+	 * @param ax - Accelerometer X axis measurement in any calibrated units.
+	 * @param ay - Accelerometer Y axis measurement in any calibrated units.
+	 * @param az - Accelerometer Z axis measurement in any calibrated units.
+	 * @param mx - (Optional) Magnetometer X axis measurement in any calibrated units. If omitted or zero, IMU-only update is used.
+	 * @param my - (Optional) Magnetometer Y axis measurement in any calibrated units. If omitted or zero, IMU-only update is used.
+	 * @param mz - (Optional) Magnetometer Z axis measurement in any calibrated units. If omitted or zero, IMU-only update is used.
+	 * @param deltaTimeSec - (Optional) Time step in seconds since the last update. If omitted, the previous sample frequency is used.
+	 *
+	 * @remarks
+	 * - The function maintains and updates the global orientation quaternion variables (`q0`, `q1`, `q2`, `q3`).
+	 * - If magnetometer data is invalid or not provided, the algorithm falls back to IMU-only mode (gyroscope + accelerometer).
+	 * - The function assumes that the sensor data is already calibrated.
+	 * - Quaternion normalization is performed after each update to prevent error accumulation.
+	 */
 	function madgwickAHRSUpdate(
 		gx: number,
 		gy: number,
@@ -364,15 +469,21 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 			s0 =
 				-v2q2 * (2.0 * q1q3 - v2q0q2 - normAx) +
 				v2q1 * (2.0 * q0q1 + v2q2q3 - normAy) -
-				v2bz * q2 * (v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
+				v2bz *
+					q2 *
+					(v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
 				(-v2bx * q3 + v2bz * q1) *
 					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - normMy) +
-				v2bx * q2 * (v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
+				v2bx *
+					q2 *
+					(v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
 			s1 =
 				v2q3 * (2.0 * q1q3 - v2q0q2 - normAx) +
 				v2q0 * (2.0 * q0q1 + v2q2q3 - normAy) -
 				4.0 * q1 * (1 - 2.0 * q1q1 - 2.0 * q2q2 - normAz) +
-				v2bz * q3 * (v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
+				v2bz *
+					q3 *
+					(v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
 				(v2bx * q2 + v2bz * q0) *
 					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - normMy) +
 				(v2bx * q3 - v4bz * q1) *
@@ -394,7 +505,9 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 					(v2bx * (0.5 - q2q2 - q3q3) + v2bz * (q1q3 - q0q2) - normMx) +
 				(-v2bx * q0 + v2bz * q2) *
 					(v2bx * (q1q2 - q0q3) + v2bz * (q0q1 + q2q3) - normMy) +
-				v2bx * q1 * (v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
+				v2bx *
+					q1 *
+					(v2bx * (q0q2 + q1q3) + v2bz * (0.5 - q1q1 - q2q2) - normMz);
 			recipNorm = (s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3) ** -0.5;
 			s0 *= recipNorm;
 			s1 *= recipNorm;
