@@ -1,6 +1,6 @@
 export type ParsedPacketData = {
-	_raw: Uint8Array<ArrayBuffer>;
-	_hex: string | Uint8Array<ArrayBuffer>;
+	_raw: Uint8Array;
+	_hex: string | Uint8Array;
 	dps: number;
 	rps: number;
 	acc: number;

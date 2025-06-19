@@ -1,11 +1,11 @@
 /**
  * Concatenates two typed arrays of the same type into a new typed array.
- * 
+ *
  * @template T - The type of typed array extending Uint8Array
  * @param a - The first typed array to concatenate
  * @param b - The second typed array to concatenate
  * @returns A new typed array of the same type containing elements from both input arrays
- * 
+ *
  * @example
  * ```typescript
  * const arr1 = new Uint8Array([1, 2, 3]);

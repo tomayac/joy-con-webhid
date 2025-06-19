@@ -1,12 +1,12 @@
 import { Madgwick } from "./madgwick.ts";
 import type {
 	Accelerometer,
-	Quaternion,
+	AccelerometerData,
 	ControllerTypeKey,
 	Gyroscope,
-	ParsedPacketData,
 	JoyConLastValues,
-	AccelerometerData,
+	ParsedPacketData,
+	Quaternion,
 } from "./types.ts";
 
 const leftMadgwick = Madgwick(10);

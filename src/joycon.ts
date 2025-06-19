@@ -1,9 +1,9 @@
-import * as PacketParser from "./parse.ts";
 import { connectRingCon } from "./connectRingCon.ts";
+import * as PacketParser from "./parse.ts";
 import type {
+	JoyConDataPacket,
 	JoyConEvents,
 	JoyConLastValues,
-	JoyConDataPacket,
 } from "./types.ts";
 import { concatTypedArrays } from "./utils.ts";
 
