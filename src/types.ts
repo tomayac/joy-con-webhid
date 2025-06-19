@@ -24,7 +24,7 @@ export type JoyConLastValues = {
 
 export type JoyConDataPacket = {
   inputReportID: Partial<ParsedPacketData>;
-  buttonStatus: Partial<ParsedPacketData> | CompleteButtonStatus;
+  buttonStatus: Partial<ParsedPacketData> & CompleteButtonStatus;
   analogStick: Partial<ParsedPacketData>;
   filter: Partial<ParsedPacketData>;
   timer: Partial<ParsedPacketData>;
