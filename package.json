@@ -33,6 +33,16 @@
     "url": "https://github.com/tomayac/joy-con-webhid/issues"
   },
   "homepage": "https://github.com/tomayac/joy-con-webhid#readme",
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    },
+    "extends": [
+      "google",
+      "prettier"
+    ]
+  },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@types/node": "^24.0.1",
