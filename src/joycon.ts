@@ -104,6 +104,7 @@ class JoyCon extends EventTarget {
     ];
     const result = new Promise((resolve) => {
       const onDeviceInfo = ({ detail: deviceInfo }: CustomEvent) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _raw, _hex, ...cleanDeviceInfo } = deviceInfo as Record<
           string,
           unknown
@@ -144,6 +145,7 @@ class JoyCon extends EventTarget {
     ];
     const result = new Promise((resolve) => {
       const onBatteryLevel = ({ detail: batteryLevel }: CustomEvent) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _raw, _hex, ...cleanBatteryLevel } = batteryLevel as Record<
           string,
           unknown
@@ -651,6 +653,7 @@ class JoyCon extends EventTarget {
   }
 
   // To be overridden by subclasses
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _receiveInputEvent(_packet: unknown): void {}
 }
 

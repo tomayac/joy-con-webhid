@@ -1,90 +1,111 @@
-var Se = Object.defineProperty;
-var Ae = (e, t, n) =>
+const Se = Object.defineProperty;
+const Ae = (e, t, n) =>
   t in e
     ? Se(e, t, { enumerable: !0, configurable: !0, writable: !0, value: n })
     : (e[t] = n);
-var ne = (e, t, n) => Ae(e, typeof t != 'symbol' ? t + '' : t, n);
+const ne = (e, t, n) => Ae(e, typeof t != 'symbol' ? t + '' : t, n);
 const Ee = async (e) => {
   const t =
-      ({
-        subcommand: s,
-        expectedReport: r,
-        timeoutErrorMessage: _ = 'timeout.',
-      }) =>
-      (w) =>
-        new Promise((g, M) => {
-          const T = setTimeout(() => {
-              w.removeEventListener('inputreport', R), M(new Error(_));
-            }, 5e3),
-            R = (S) => {
-              const d = S;
-              if (d.reportId !== 33) return;
-              const v = new Uint8Array(d.data.buffer);
-              for (const [f, y] of Object.entries(r))
-                if (v[Number(f) - 1] !== y) return;
-              w.removeEventListener('inputreport', R),
-                clearTimeout(T),
-                setTimeout(g, 50);
-            };
-          w.addEventListener('inputreport', R),
-            (async () =>
-              await w.sendReport(
-                1,
-                new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, ...s])
-              ))();
-        }),
-    n = t({
-      subcommand: [34, 1],
-      expectedReport: {
-        13: 128,
-        14: 34,
-      },
-    }),
-    c = t({
-      subcommand: [
-        33, 33, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 243,
-      ],
-      expectedReport: {
-        14: 33,
-      },
-    }),
-    l = t({
-      subcommand: [89],
-      expectedReport: {
-        14: 89,
-        16: 32,
-      },
-      timeoutErrorMessage: 'ring-con not found.',
-    }),
-    o = t({
-      subcommand: [
-        92, 6, 3, 37, 6, 0, 0, 0, 0, 28, 22, 237, 52, 54, 0, 0, 0, 10, 100, 11,
-        230, 169, 34, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 144, 168, 225, 52, 54,
-      ],
-      expectedReport: {
-        14: 92,
-      },
-    }),
-    i = t({
-      subcommand: [90, 4, 1, 1, 2],
-      expectedReport: {
-        14: 90,
-      },
-    });
+    ({
+      subcommand: s,
+      expectedReport: r,
+      timeoutErrorMessage: _ = 'timeout.',
+    }) =>
+    (w) =>
+      new Promise((g, M) => {
+        const T = setTimeout(() => {
+          w.removeEventListener('inputreport', R), M(new Error(_));
+        }, 5e3);
+        const R = (S) => {
+          const d = S;
+          if (d.reportId !== 33) return;
+          const v = new Uint8Array(d.data.buffer);
+          for (const [f, y] of Object.entries(r))
+            if (v[Number(f) - 1] !== y) return;
+          w.removeEventListener('inputreport', R),
+            clearTimeout(T),
+            setTimeout(g, 50);
+        };
+        w.addEventListener('inputreport', R),
+          (async () =>
+            await w.sendReport(
+              1,
+              new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, ...s])
+            ))();
+      });
+  const n = t({
+    subcommand: [34, 1],
+    expectedReport: {
+      13: 128,
+      14: 34,
+    },
+  });
+  const c = t({
+    subcommand: [
+      33, 33, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 243,
+    ],
+    expectedReport: {
+      14: 33,
+    },
+  });
+  const l = t({
+    subcommand: [89],
+    expectedReport: {
+      14: 89,
+      16: 32,
+    },
+    timeoutErrorMessage: 'ring-con not found.',
+  });
+  const o = t({
+    subcommand: [
+      92, 6, 3, 37, 6, 0, 0, 0, 0, 28, 22, 237, 52, 54, 0, 0, 0, 10, 100, 11,
+      230, 169, 34, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 144, 168, 225, 52, 54,
+    ],
+    expectedReport: {
+      14: 92,
+    },
+  });
+  const i = t({
+    subcommand: [90, 4, 1, 1, 2],
+    expectedReport: {
+      14: 90,
+    },
+  });
   await n(e), await c(e), await l(e), await o(e), await i(e);
 };
 function we(e, t) {
-  const n = 1e3 / e,
-    c = 0.4;
-  let l = !0,
-    o = 1,
-    i = 0,
-    s = 0,
-    r = 0,
-    _ = 1 / n;
+  const n = 1e3 / e;
+  const c = 0.4;
+  let l = !0;
+  let o = 1;
+  let i = 0;
+  let s = 0;
+  let r = 0;
+  let _ = 1 / n;
   function w(d, v, f, y, x, I) {
-    let a, u, b, L, m, E, k, B, F, O, K, V, W, X, j, H, Y, Z, ee, p, h, te;
+    let a;
+    let u;
+    let b;
+    let L;
+    let m;
+    let E;
+    let k;
+    let B;
+    let F;
+    let O;
+    let K;
+    let V;
+    let W;
+    let X;
+    let j;
+    let H;
+    let Y;
+    let Z;
+    let ee;
+    let p;
+    let h;
+    let te;
     if (
       ((E = 0.5 * (-i * d - s * v - r * f)),
       (k = 0.5 * (o * d + s * f - r * v)),
@@ -93,9 +114,9 @@ function we(e, t) {
       !(y === 0 && x === 0 && I === 0))
     ) {
       a = (y * y + x * x + I * I) ** -0.5;
-      const G = y * a,
-        Q = x * a,
-        $ = I * a;
+      const G = y * a;
+      const Q = x * a;
+      const $ = I * a;
       (O = 2 * o),
         (K = 2 * i),
         (V = 2 * s),
@@ -141,15 +162,15 @@ function we(e, t) {
     };
   }
   function M(d, v, f, y, x, I) {
-    const a = -Math.atan2(d, Math.sqrt(v * v + f * f)),
-      u = g(d, v, f, 1, 0, 0),
-      b = g(1, 0, 0, u.x, u.y, u.z),
-      L = Math.atan2(b.y, b.z),
-      m = Math.cos(L),
-      E = Math.sin(a),
-      k = Math.sin(L),
-      B = x * m - I * k,
-      F = y * Math.cos(a) + x * k * E + I * m * E;
+    const a = -Math.atan2(d, Math.sqrt(v * v + f * f));
+    const u = g(d, v, f, 1, 0, 0);
+    const b = g(1, 0, 0, u.x, u.y, u.z);
+    const L = Math.atan2(b.y, b.z);
+    const m = Math.cos(L);
+    const E = Math.sin(a);
+    const k = Math.sin(L);
+    const B = x * m - I * k;
+    const F = y * Math.cos(a) + x * k * E + I * m * E;
     return {
       heading: -Math.atan2(B, F),
       pitch: a,
@@ -157,12 +178,12 @@ function we(e, t) {
     };
   }
   function T(d) {
-    const v = Math.cos(d.heading * 0.5),
-      f = Math.sin(d.heading * 0.5),
-      y = Math.cos(d.pitch * 0.5),
-      x = Math.sin(d.pitch * 0.5),
-      I = Math.cos(d.roll * 0.5),
-      a = Math.sin(d.roll * 0.5);
+    const v = Math.cos(d.heading * 0.5);
+    const f = Math.sin(d.heading * 0.5);
+    const y = Math.cos(d.pitch * 0.5);
+    const x = Math.sin(d.pitch * 0.5);
+    const I = Math.cos(d.roll * 0.5);
+    const a = Math.sin(d.roll * 0.5);
     return {
       w: I * y * v + a * x * f,
       x: a * y * v - I * x * f,
@@ -171,48 +192,48 @@ function we(e, t) {
     };
   }
   function R(d, v, f, y, x, I) {
-    const a = M(d, v, f, y, x, I),
-      u = T(a),
-      b = (u.w * u.w + u.x * u.x + u.y * u.y + u.z * u.z) ** -0.5;
+    const a = M(d, v, f, y, x, I);
+    const u = T(a);
+    const b = (u.w * u.w + u.x * u.x + u.y * u.y + u.z * u.z) ** -0.5;
     (o = u.w * b), (i = u.x * b), (s = u.y * b), (r = u.z * b), (l = !0);
   }
   function S(d, v, f, y, x, I, a, u, b, L) {
     (_ = L ?? _), l || R(y, x, I, a ?? 0, u ?? 0, b ?? 0);
-    let m,
-      E,
-      k,
-      B,
-      F,
-      O,
-      K,
-      V,
-      W,
-      X,
-      j,
-      H,
-      Y,
-      Z,
-      ee,
-      p,
-      h,
-      te,
-      G,
-      Q,
-      $,
-      ie,
-      be,
-      ce,
-      re,
-      he,
-      U,
-      N,
-      le,
-      C,
-      ae,
-      A,
-      q,
-      ue,
-      D;
+    let m;
+    let E;
+    let k;
+    let B;
+    let F;
+    let O;
+    let K;
+    let V;
+    let W;
+    let X;
+    let j;
+    let H;
+    let Y;
+    let Z;
+    let ee;
+    let p;
+    let h;
+    let te;
+    let G;
+    let Q;
+    let $;
+    let ie;
+    let be;
+    let ce;
+    let re;
+    let he;
+    let U;
+    let N;
+    let le;
+    let C;
+    let ae;
+    let A;
+    let q;
+    let ue;
+    let D;
     if (
       a === void 0 ||
       u === void 0 ||
@@ -230,13 +251,13 @@ function we(e, t) {
       !(y === 0 && x === 0 && I === 0))
     ) {
       m = (y * y + x * x + I * I) ** -0.5;
-      const me = y * m,
-        ve = x * m,
-        Ie = I * m;
+      const me = y * m;
+      const ve = x * m;
+      const Ie = I * m;
       m = (a * a + u * u + b * b) ** -0.5;
-      const oe = a * m,
-        de = u * m,
-        pe = b * m;
+      const oe = a * m;
+      const de = u * m;
+      const pe = b * m;
       (H = 2 * o * oe),
         (Y = 2 * o * de),
         (Z = 2 * o * pe),
@@ -348,8 +369,8 @@ function ke(e, t) {
   return n;
 }
 function se(e, t = (n) => n) {
-  const n = e == null ? 0 : e.length,
-    c = ke(e, t);
+  const n = e == null ? 0 : e.length;
+  const c = ke(e, t);
   return n ? c / n : Number.NaN;
 }
 function Le(e) {
@@ -376,19 +397,19 @@ function Le(e) {
   return t;
 }
 const Be = {
-    // biome-ignore lint/complexity/useSimpleNumberKeys:
-    1: 'Left Joy-Con',
-    // biome-ignore lint/complexity/useSimpleNumberKeys:
-    2: 'Right Joy-Con',
-    // biome-ignore lint/complexity/useSimpleNumberKeys:
-    3: 'Pro Controller',
-  },
-  fe = 0.75,
-  Fe = 0.0125,
-  ge = Math.PI / 2;
+  // biome-ignore lint/complexity/useSimpleNumberKeys:
+  1: 'Left Joy-Con',
+  // biome-ignore lint/complexity/useSimpleNumberKeys:
+  2: 'Right Joy-Con',
+  // biome-ignore lint/complexity/useSimpleNumberKeys:
+  3: 'Pro Controller',
+};
+const fe = 0.75;
+const Fe = 0.0125;
+const ge = Math.PI / 2;
 function Ce(e, t, n, c) {
-  const l = Date.now(),
-    o = e.timestamp ? (l - e.timestamp) / 1e3 : 0;
+  const l = Date.now();
+  const o = e.timestamp ? (l - e.timestamp) / 1e3 : 0;
   e.timestamp = l;
   const i = Math.sqrt(n.x ** 2 + n.y ** 2 + n.z ** 2);
   return (
@@ -410,11 +431,11 @@ function Ce(e, t, n, c) {
   );
 }
 function Ue(e) {
-  const t = 180 / Math.PI,
-    n = e.w * e.w,
-    c = e.x * e.x,
-    l = e.y * e.y,
-    o = e.z * e.z;
+  const t = 180 / Math.PI;
+  const n = e.w * e.w;
+  const c = e.x * e.x;
+  const l = e.y * e.y;
+  const o = e.z * e.z;
   return {
     alpha: (t * Math.atan2(2 * (e.x * e.y + e.z * e.w), c - l - o + n)).toFixed(
       6
@@ -438,12 +459,12 @@ function z(e) {
   return Number.parseFloat((1694e-7 * t.getInt16(0, !0)).toFixed(6));
 }
 function Ne(e) {
-  const t = e.slice(15, 26),
-    n = t.slice(0, 1)[0],
-    c = t.slice(1, 2)[0],
-    l = t.slice(2, 3),
-    o = t.slice(4, 10),
-    i = [];
+  const t = e.slice(15, 26);
+  const n = t.slice(0, 1)[0];
+  const c = t.slice(1, 2)[0];
+  const l = t.slice(2, 3);
+  const o = t.slice(4, 10);
+  const i = [];
   for (const _ of o) i.push(_.toString(16));
   const s = t.slice(11, 12);
   return {
@@ -744,12 +765,12 @@ function Ze(e) {
   };
 }
 function Re(e) {
-  const t = 5e-3 * e.length,
-    n = [
-      se(e.map((c) => c[0])),
-      se(e.map((c) => c[1])),
-      se(e.map((c) => c[2])),
-    ].map((c) => Number.parseFloat((c * t).toFixed(6)));
+  const t = 5e-3 * e.length;
+  const n = [
+    se(e.map((c) => c[0])),
+    se(e.map((c) => c[1])),
+    se(e.map((c) => c[2])),
+  ].map((c) => Number.parseFloat((c * t).toFixed(6)));
   return {
     x: n[0],
     y: n[1],
@@ -816,7 +837,7 @@ class _e extends EventTarget {
    * Opens a connection to the Joy-Con device if it is not already opened,
    * and attaches an event listener for input reports.
    *
-   * @returns {Promise<void>} A promise that resolves when the device is opened and the event listener is attached.
+   * @return {Promise<void>} A promise that resolves when the device is opened and the event listener is attached.
    */
   async open() {
     this.device.opened || (await this.device.open()),
@@ -832,19 +853,19 @@ class _e extends EventTarget {
    * "deviceinfo" event. When the event is received, it resolves with the device
    * information, excluding any raw or hexadecimal data fields.
    *
-   * @returns A promise that resolves with the cleaned device information object.
+   * @return A promise that resolves with the cleaned device information object.
    */
   async getRequestDeviceInfo() {
-    const l = [0, 0, 0, 0, 0, 0, 0, 0, 0, ...[2]],
-      o = new Promise((i) => {
-        const s = ({ detail: r }) => {
-          const { _raw: _, _hex: w, ...g } = r;
-          i(g);
-        };
-        this.addEventListener('deviceinfo', s, {
-          once: !0,
-        });
+    const l = [0, 0, 0, 0, 0, 0, 0, 0, 0, ...[2]];
+    const o = new Promise((i) => {
+      const s = ({ detail: r }) => {
+        const { _raw: _, _hex: w, ...g } = r;
+        i(g);
+      };
+      this.addEventListener('deviceinfo', s, {
+        once: !0,
       });
+    });
     return await this.device.sendReport(1, new Uint8Array(l)), o;
   }
   /**
@@ -854,19 +875,19 @@ class _e extends EventTarget {
    * then listens for a "batterylevel" custom event. Once the event is received,
    * it resolves with the battery level information, excluding any raw or hex data.
    *
-   * @returns {Promise<unknown>} A promise that resolves with the cleaned battery level data.
+   * @return {Promise<unknown>} A promise that resolves with the cleaned battery level data.
    */
   async getBatteryLevel() {
-    const l = [0, 0, 0, 0, 0, 0, 0, 0, 0, ...[80]],
-      o = new Promise((i) => {
-        const s = ({ detail: r }) => {
-          const { _raw: _, _hex: w, ...g } = r;
-          i(g);
-        };
-        this.addEventListener('batterylevel', s, {
-          once: !0,
-        });
+    const l = [0, 0, 0, 0, 0, 0, 0, 0, 0, ...[80]];
+    const o = new Promise((i) => {
+      const s = ({ detail: r }) => {
+        const { _raw: _, _hex: w, ...g } = r;
+        i(g);
+      };
+      this.addEventListener('batterylevel', s, {
+        once: !0,
       });
+    });
     return await this.device.sendReport(1, new Uint8Array(l)), o;
   }
   /**
@@ -875,7 +896,7 @@ class _e extends EventTarget {
    * This method sends a specific output report to the device to switch it into
    * Simple HID mode, which allows for basic input/output communication.
    *
-   * @returns {Promise<void>} A promise that resolves once the command has been sent.
+   * @return {Promise<void>} A promise that resolves once the command has been sent.
    * @throws {DOMException} If the report cannot be sent to the device.
    */
   async enableSimpleHIDMode() {
@@ -889,7 +910,7 @@ class _e extends EventTarget {
    * analog stick positions, and sensor data. The method constructs the required data packet
    * and sends it to the device using the HID report protocol.
    *
-   * @returns {Promise<void>} A promise that resolves once the command has been sent.
+   * @return {Promise<void>} A promise that resolves once the command has been sent.
    * @throws {Error} If the device communication fails.
    */
   async enableStandardFullMode() {
@@ -902,7 +923,7 @@ class _e extends EventTarget {
    * Sends a subcommand to the device to activate the IMU, which allows the Joy-Con
    * to start reporting motion sensor data such as accelerometer and gyroscope readings.
    *
-   * @returns A promise that resolves when the command has been sent to the device.
+   * @return A promise that resolves when the command has been sent to the device.
    * @throws Will throw an error if sending the report to the device fails.
    */
   async enableIMUMode() {
@@ -916,7 +937,7 @@ class _e extends EventTarget {
    * the accelerometer and gyroscope sensors. This can be useful for reducing power
    * consumption or when IMU data is not needed.
    *
-   * @returns A promise that resolves when the command has been sent to the device.
+   * @return A promise that resolves when the command has been sent to the device.
    * @throws Will throw an error if sending the report to the device fails.
    */
   async disableIMUMode() {
@@ -930,7 +951,7 @@ class _e extends EventTarget {
    * It constructs the required data packet, including the subcommand for enabling vibration,
    * and transmits it using the WebHID API.
    *
-   * @returns A promise that resolves when the vibration command has been sent.
+   * @return A promise that resolves when the vibration command has been sent.
    * @throws {DOMException} If sending the report to the device fails.
    */
   async enableVibration() {
@@ -943,7 +964,7 @@ class _e extends EventTarget {
    * Sends a specific output report to the device to turn off vibration.
    * This method constructs the appropriate data packet and sends it using the WebHID API.
    *
-   * @returns A promise that resolves when the vibration disable command has been sent.
+   * @return A promise that resolves when the vibration disable command has been sent.
    */
   async disableVibration() {
     const l = [0, 0, 1, 64, 64, 0, 1, 64, 64, ...[72, 0]];
@@ -965,10 +986,10 @@ class _e extends EventTarget {
    * If supported, it sends a sequence of USB HID reports to the device to enable joystick reporting.
    * The sequence of reports is required to properly initialize the device for joystick input over USB.
    *
-   * @returns {Promise<void>} A promise that resolves once the reports have been sent.
+   * @return {Promise<void>} A promise that resolves once the reports have been sent.
    */
   async enableUSBHIDJoystickReport() {
-    var c;
+    let c;
     ((c = this.device.collections[0].outputReports) == null
       ? void 0
       : c.find((l) => l.reportId === 128)) != null &&
@@ -983,7 +1004,7 @@ class _e extends EventTarget {
    * @param lowFrequency - The low frequency value for the rumble effect (in Hz). Must be between 40.875885 and 626.286133.
    * @param highFrequency - The high frequency value for the rumble effect (in Hz). Must be between 81.75177 and 1252.572266.
    * @param amplitude - The amplitude (strength) of the rumble effect. Must be between 0 (off) and 1 (maximum).
-   * @returns A promise that resolves when the rumble command has been sent to the device.
+   * @return A promise that resolves when the rumble command has been sent to the device.
    *
    * @remarks
    * This method encodes the frequency and amplitude values into the format expected by the Joy-Con hardware,
@@ -991,11 +1012,11 @@ class _e extends EventTarget {
    * The rumble effect is applied to both left and right motors of the Joy-Con.
    */
   async rumble(n, c, l) {
-    const o = (R, S, d) => Math.min(Math.max(R, S), d),
-      s = new Uint8Array(9);
+    const o = (R, S, d) => Math.min(Math.max(R, S), d);
+    const s = new Uint8Array(9);
     s[0] = 0;
-    let r = o(n, 40.875885, 626.286133),
-      _ = o(c, 81.75177, 1252.572266);
+    let r = o(n, 40.875885, 626.286133);
+    let _ = o(c, 81.75177, 1252.572266);
     (_ = (Math.round(32 * Math.log2(_ * 0.1)) - 96) * 4),
       (r = Math.round(32 * Math.log2(r * 0.1)) - 64);
     const w = o(l, 0, 1);
@@ -1026,11 +1047,11 @@ class _e extends EventTarget {
    * Sends a subcommand to the device to control the LED indicators.
    *
    * @param n - The LED state value to set. The value determines which LEDs are turned on or off.
-   * @returns A promise that resolves when the command has been sent to the device.
+   * @return A promise that resolves when the command has been sent to the device.
    */
   async setLEDState(n) {
-    const c = [0, 0, 0, 0, 0, 0, 0, 0],
-      l = [48, n];
+    const c = [0, 0, 0, 0, 0, 0, 0, 0];
+    const l = [48, n];
     await this.device.sendReport(1, new Uint8Array([...c, 0, ...l]));
   }
   /**
@@ -1040,7 +1061,7 @@ class _e extends EventTarget {
    * then sends the updated state to the device.
    *
    * @param n - The index of the LED to turn on (0-based).
-   * @returns A promise that resolves when the LED state has been updated.
+   * @return A promise that resolves when the LED state has been updated.
    */
   async setLED(n) {
     (this.ledstate |= 1 << n), await this.setLEDState(this.ledstate);
@@ -1050,7 +1071,7 @@ class _e extends EventTarget {
    * in the internal LED state and updates the device.
    *
    * @param n - The index of the LED to reset (0-based).
-   * @returns A promise that resolves when the LED state has been updated.
+   * @return A promise that resolves when the LED state has been updated.
    */
   async resetLED(n) {
     (this.ledstate &= ~((1 << n) | (1 << (4 + n)))),
@@ -1064,7 +1085,7 @@ class _e extends EventTarget {
    * to the controller.
    *
    * @param n - The index of the LED to blink (typically 0-3).
-   * @returns A promise that resolves when the LED state has been updated.
+   * @return A promise that resolves when the LED state has been updated.
    */
   async blinkLED(n) {
     (this.ledstate &= ~(1 << n)),
@@ -1085,12 +1106,13 @@ class _e extends EventTarget {
    * @private
    */
   _onInputReport({ data: n, reportId: c, device: l }) {
-    var r, _;
+    let r;
+    let _;
     if (!n) return;
-    const o = tt(new Uint8Array([c]), new Uint8Array(n.buffer)),
-      i = Array.from(o)
-        .map((w) => w.toString(16).padStart(2, '0'))
-        .join('');
+    const o = tt(new Uint8Array([c]), new Uint8Array(n.buffer));
+    const i = Array.from(o)
+      .map((w) => w.toString(16).padStart(2, '0'))
+      .join('');
     let s = {
       inputReportID: Pe(o, i),
     };
@@ -1127,11 +1149,13 @@ class _e extends EventTarget {
             }),
           c === 48)
         ) {
-          const w = Xe(o, i),
-            g = Ye(o, i),
-            M = Re(g.map((S) => S.map((d) => d.rps ?? 0))),
-            T = Re(g.map((S) => S.map((d) => d.dps ?? 0))),
-            R = Ze(w.map((S) => [S.x.acc ?? 0, S.y.acc ?? 0, S.z.acc ?? 0]));
+          const w = Xe(o, i);
+          const g = Ye(o, i);
+          const M = Re(g.map((S) => S.map((d) => d.rps ?? 0)));
+          const T = Re(g.map((S) => S.map((d) => d.dps ?? 0)));
+          const R = Ze(
+            w.map((S) => [S.x.acc ?? 0, S.y.acc ?? 0, S.z.acc ?? 0])
+          );
           this.madgwick.update(M.x, M.y, M.z, R.x, R.y, R.z),
             (s = {
               ...s,
@@ -1240,41 +1264,41 @@ class st extends _e {
   }
 }
 const it = async (e) => {
-    let t = null;
-    return (
-      e.productId === 8198
-        ? (t = new nt(e))
-        : e.productId === 8199 &&
-          e.productName === 'Joy-Con (R)' &&
-          (t = new ot(e)),
-      t || (t = new st(e)),
-      await t.open(),
-      await t.enableUSBHIDJoystickReport(),
-      await t.enableStandardFullMode(),
-      await t.enableIMUMode(),
-      t
-    );
-  },
-  Me = /* @__PURE__ */ new Map(),
-  ye = [],
-  qe = (e) => {
-    const t = ye.indexOf(e);
-    return t >= 0 ? t : (ye.push(e), ye.length - 1);
-  },
-  xe = async (e) => {
-    const t = qe(e);
-    console.log(
-      `HID connected: ${t} ${e.productId.toString(16)} ${e.productName}`
-    ),
-      Me.set(t, await it(e));
-  },
-  ct = async (e) => {
-    const t = qe(e);
-    console.log(
-      `HID disconnected: ${t} ${e.productId.toString(16)} ${e.productName}`
-    ),
-      Me.delete(t);
-  };
+  let t = null;
+  return (
+    e.productId === 8198
+      ? (t = new nt(e))
+      : e.productId === 8199 &&
+        e.productName === 'Joy-Con (R)' &&
+        (t = new ot(e)),
+    t || (t = new st(e)),
+    await t.open(),
+    await t.enableUSBHIDJoystickReport(),
+    await t.enableStandardFullMode(),
+    await t.enableIMUMode(),
+    t
+  );
+};
+const Me = /* @__PURE__ */ new Map();
+const ye = [];
+const qe = (e) => {
+  const t = ye.indexOf(e);
+  return t >= 0 ? t : (ye.push(e), ye.length - 1);
+};
+const xe = async (e) => {
+  const t = qe(e);
+  console.log(
+    `HID connected: ${t} ${e.productId.toString(16)} ${e.productName}`
+  ),
+    Me.set(t, await it(e));
+};
+const ct = async (e) => {
+  const t = qe(e);
+  console.log(
+    `HID disconnected: ${t} ${e.productId.toString(16)} ${e.productName}`
+  ),
+    Me.delete(t);
+};
 navigator.hid.addEventListener('connect', async ({ device: e }) => {
   xe(e);
 });

@@ -333,7 +333,20 @@ const rightControls = [
   },
 ];
 
-const updateControl = (control, packet, side) => {
+/**
+ * Updates the given control based on the provided packet data.
+ * If the change in value exceeds the control's threshold, generates and sends a MIDI message.
+ *
+ * @param {Object} control - The control object to update.
+ * @param {number|Object} packet - The incoming data packet used to read the new value.
+ * @property {number} [control.threshold=0] - The minimum change required to trigger an update.
+ * @property {number} [control.last_value] - The last value processed for this control.
+ * @property {number} [control.init_value=0] - The initial value to use if last_value is undefined.
+ * @property {function} control.read_value - Function to extract the value from the packet.
+ * @property {function} control.generate_midi - Function to generate a MIDI message from the value.
+ * @property {string} control.name - The name of the control, used for sending MIDI.
+ */
+const updateControl = (control, packet) => {
   window.lastPacket = packet;
   if (control.threshold === undefined) {
     control.threshold = 0;

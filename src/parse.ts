@@ -640,10 +640,10 @@ export function calculateActualAccelerometer(accelerometers: number[][]) {
       (mean(accelerometers.map(([x]) => x)) * elapsedTime).toFixed(6)
     ),
     y: Number.parseFloat(
-      (mean(accelerometers.map(([_, y]) => y)) * elapsedTime).toFixed(6)
+      (mean(accelerometers.map(([, y]) => y)) * elapsedTime).toFixed(6)
     ),
     z: Number.parseFloat(
-      (mean(accelerometers.map(([_, __, z]) => z)) * elapsedTime).toFixed(6)
+      (mean(accelerometers.map(([, , z]) => z)) * elapsedTime).toFixed(6)
     ),
   };
 
