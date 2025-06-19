@@ -3,7 +3,12 @@
 	"version": "0.7.0",
 	"description": "Joy-Con over WebHID ",
 	"type": "module",
-	"keywords": ["joycon", "webhid", "gamepad", "controller"],
+	"keywords": [
+		"joycon",
+		"webhid",
+		"gamepad",
+		"controller"
+	],
 	"scripts": {
 		"server": "cp dist/joy-con-webhid.es.js demo; npx http-server demo",
 		"start": "npx http-server",
@@ -30,7 +35,6 @@
 		"@biomejs/biome": "1.9.4",
 		"@types/node": "^24.0.1",
 		"@types/w3c-web-hid": "^1.0.6",
-		"cp": "^0.2.0",
 		"http-server": "^14.1.1",
 		"npm": "^11.4.2",
 		"typescript": "^5.8.3",
