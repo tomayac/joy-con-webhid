@@ -302,7 +302,7 @@ export function Madgwick(sampleInterval: number, options?: MadgwickOptions) {
 		q2 = iq.y * recipNorm;
 		q3 = iq.z * recipNorm;
 
-		initalised = true;
+		initialised = true;
 	}
 
 	/**
