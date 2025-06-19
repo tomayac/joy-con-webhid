@@ -9,10 +9,6 @@ import type {
 	Quaternion,
 } from "./types.ts";
 
-const leftMadgwick = Madgwick(10);
-const rightMadgwick = Madgwick(10);
-const rad2deg = 180.0 / Math.PI;
-
 /**
  * Computes the sum of the values returned by the `iteratee` function for each element in the given array.
  * If all results are `undefined`, returns `undefined`.
@@ -173,6 +169,7 @@ export function toEulerAnglesQuaternion(q: Quaternion): {
 	beta: string;
 	gamma: string;
 } {
+	const rad2deg = 180.0 / Math.PI;
 	const ww = q.w * q.w;
 	const xx = q.x * q.x;
 	const yy = q.y * q.y;
@@ -206,12 +203,13 @@ export function toQuaternion(
 	productId: number,
 ): Quaternion {
 	if (productId === 0x2006) {
+		const leftMadgwick = Madgwick(10);
 		leftMadgwick.update(gyro.x, gyro.y, gyro.z, accl.x, accl.y, accl.z);
 		return leftMadgwick.getQuaternion();
 	}
 
+	const rightMadgwick = Madgwick(10);
 	rightMadgwick.update(gyro.x, gyro.y, gyro.z, accl.x, accl.y, accl.z);
-
 	return rightMadgwick.getQuaternion();
 }
 

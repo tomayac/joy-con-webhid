@@ -544,15 +544,15 @@ class JoyCon extends EventTarget {
 						fullData,
 						hexData,
 					),
-					vibrator: PacketParser.parseVibrator?.(fullData, hexData),
+					vibrator: PacketParser.parseVibrator(fullData, hexData),
 				};
 
 				if (reportId === 0x21) {
 					packet = {
 						...packet,
-						ack: PacketParser.parseAck?.(fullData, hexData),
-						subcommandID: PacketParser.parseSubcommandID?.(fullData, hexData),
-						subcommandReplyData: PacketParser.parseSubcommandReplyData?.(
+						ack: PacketParser.parseAck(fullData, hexData),
+						subcommandID: PacketParser.parseSubcommandID(fullData, hexData),
+						subcommandReplyData: PacketParser.parseSubcommandReplyData(
 							fullData,
 							hexData,
 						),
@@ -561,25 +561,25 @@ class JoyCon extends EventTarget {
 				}
 
 				if (reportId === 0x30) {
-					const accelerometers = PacketParser.parseAccelerometers?.(
+					const accelerometers = PacketParser.parseAccelerometers(
 						fullData,
 						hexData,
 					);
-					const gyroscopes = PacketParser.parseGyroscopes?.(fullData, hexData);
-					const rps = PacketParser.calculateActualGyroscope?.(
+					const gyroscopes = PacketParser.parseGyroscopes(fullData, hexData);
+					const rps = PacketParser.calculateActualGyroscope(
 						gyroscopes.map((g) => g.map((v) => v.rps ?? 0)),
 					);
-					const dps = PacketParser.calculateActualGyroscope?.(
+					const dps = PacketParser.calculateActualGyroscope(
 						gyroscopes.map((g) => g.map((v) => v.dps ?? 0)),
 					);
-					const acc = PacketParser.calculateActualAccelerometer?.(
+					const acc = PacketParser.calculateActualAccelerometer(
 						accelerometers.map((a) => [
 							a.x.acc ?? 0,
 							a.y.acc ?? 0,
 							a.z.acc ?? 0,
 						]),
 					);
-					const quaternion = PacketParser.toQuaternion?.(
+					const quaternion = PacketParser.toQuaternion(
 						rps,
 						acc,
 						device.productId,
@@ -590,16 +590,16 @@ class JoyCon extends EventTarget {
 						gyroscopes: gyroscopes,
 						actualAccelerometer: acc,
 						actualGyroscope: { dps, rps },
-						actualOrientation: PacketParser.toEulerAngles?.(
+						actualOrientation: PacketParser.toEulerAngles(
 							this.lastValues,
 							rps,
 							acc,
 							device.productId,
 						),
 						actualOrientationQuaternion:
-							PacketParser.toEulerAnglesQuaternion?.(quaternion),
+							PacketParser.toEulerAnglesQuaternion(quaternion),
 						quaternion: quaternion,
-						ringCon: PacketParser.parseRingCon?.(fullData, hexData),
+						ringCon: PacketParser.parseRingCon(fullData, hexData),
 					};
 				}
 				break;
