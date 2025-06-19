@@ -139,14 +139,12 @@ const visualize = (joyCon, packet) => {
 // Joy-Cons may sleep until touched, so attach the listener dynamically.
 setInterval(async () => {
   for (const joyCon of connectedJoyCons.values()) {
-    console.log(joyCon.eventListenerAttached);
     if (joyCon.eventListenerAttached) {
       continue;
     }
     joyCon.eventListenerAttached = true;
     await joyCon.enableVibration();
     joyCon.on('hidinput', (event) => {
-      console.log('hidinput', event);
       visualize(joyCon, event.detail);
     });
 
