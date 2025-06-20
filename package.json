@@ -13,7 +13,7 @@
     "server": "cp dist/joy-con-webhid.es.js demo; npx http-server demo",
     "start": "npx http-server",
     "lint": "npx eslint . --ext .ts,.js,.mjs --fix",
-    "prepare": "npm run lint && npm run fix && npm run build && npm run copyDeps",
+    "prepare": "npm run lint && npm run fix && npm run build",
     "fix": "npx prettier --write .",
     "build": "npx tsc && npx vite build"
   },
