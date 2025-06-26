@@ -1,18 +1,16 @@
 export type ParsedPacketData = {
   _raw: Uint8Array;
   _hex: string | Uint8Array;
-  dps: number;
-  rps: number;
-  acc: number;
-  level: string;
-  type: string;
+};
+
+export type RingConDataPacket = {
   strain: number;
 };
 
 export type AccelerometerData = {
-  x: Partial<ParsedPacketData>;
-  y: Partial<ParsedPacketData>;
-  z: Partial<ParsedPacketData>;
+  x: ParsedPacketData & AccelerometerPacket;
+  y: ParsedPacketData & AccelerometerPacket;
+  z: ParsedPacketData & AccelerometerPacket;
 };
 
 export type JoyConLastValues = {
@@ -23,27 +21,27 @@ export type JoyConLastValues = {
 };
 
 export type JoyConDataPacket = {
-  inputReportID: Partial<ParsedPacketData>;
-  buttonStatus: Partial<ParsedPacketData> & Partial<CompleteButtonStatus>;
-  analogStick: Partial<ParsedPacketData>;
-  filter: Partial<ParsedPacketData>;
-  timer: Partial<ParsedPacketData>;
-  batteryLevel: Partial<ParsedPacketData>;
-  connectionInfo: Partial<ParsedPacketData>;
-  analogStickLeft: Partial<ParsedPacketData>;
-  analogStickRight: Partial<ParsedPacketData>;
-  vibrator: Partial<ParsedPacketData>;
-  ack: Partial<ParsedPacketData>;
-  subcommandID: Partial<ParsedPacketData>;
-  subcommandReplyData: Partial<ParsedPacketData>;
-  deviceInfo: Partial<ParsedPacketData>;
+  inputReportID: ParsedPacketData;
+  buttonStatus: ParsedPacketData | Partial<CompleteButtonStatus>;
+  analogStick: ParsedPacketData | AnalogStick;
+  filter: ParsedPacketData;
+  timer: ParsedPacketData;
+  batteryLevel: ParsedPacketData | BatteryLevel;
+  connectionInfo: ParsedPacketData;
+  analogStickLeft: ParsedPacketData | AnalogStick;
+  analogStickRight: ParsedPacketData | AnalogStick;
+  vibrator: ParsedPacketData;
+  ack: ParsedPacketData;
+  subcommandID: ParsedPacketData;
+  subcommandReplyData: ParsedPacketData;
+  deviceInfo: ParsedPacketData | DeviceInfo;
   accelerometers: AccelerometerData[];
   actualAccelerometer: {
     x: number;
     y: number;
     z: number;
   };
-  gyroscopes: Partial<ParsedPacketData>[][];
+  gyroscopes: (ParsedPacketData | GyroscopePacket)[][];
   actualGyroscope: {
     dps: {
       x: number;
@@ -67,7 +65,7 @@ export type JoyConDataPacket = {
     gamma: string;
   };
   quaternion: Quaternion;
-  ringCon: Partial<ParsedPacketData>;
+  ringCon: RingConDataPacket | ParsedPacketData;
 };
 
 export type Gyroscope = { x: number; y: number; z: number };
@@ -124,9 +122,6 @@ export type Madgwick = {
 };
 
 export type CompleteButtonStatus = {
-  _raw: Uint8Array<ArrayBuffer>;
-  _hex: string | Uint8Array<ArrayBuffer>;
-  // Byte 3 (Right Joy-Con)
   y: boolean;
   x: boolean;
   b: boolean;
@@ -151,4 +146,32 @@ export type CompleteButtonStatus = {
   home: boolean;
   capture: boolean;
   chargingGrip: boolean;
+};
+
+export type DeviceInfo = {
+  firmwareVersion: {
+    major: number;
+    minor: number;
+  };
+  type: ControllerTypeKey;
+  macAddress: string;
+  spiColorInUse: string;
+};
+
+export type BatteryLevel = {
+  level: string;
+};
+
+export type AccelerometerPacket = {
+  acc: number;
+};
+
+export type GyroscopePacket = {
+  dps: number;
+  rps: number;
+};
+
+export type AnalogStick = {
+  horizontal: string;
+  vertical: string;
 };

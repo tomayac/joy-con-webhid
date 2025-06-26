@@ -2,12 +2,17 @@ import { Madgwick } from './madgwick.ts';
 import type {
   Accelerometer,
   AccelerometerData,
+  AnalogStick,
+  BatteryLevel,
   CompleteButtonStatus,
   ControllerTypeKey,
+  DeviceInfo,
   Gyroscope,
+  GyroscopePacket,
   JoyConLastValues,
   ParsedPacketData,
   Quaternion,
+  RingConDataPacket,
 } from './types.ts';
 
 /**
@@ -257,7 +262,9 @@ function toRevolutionsPerSecond(value: Uint8Array): number {
   return Number.parseFloat((0.0001694 * view.getInt16(0, true)).toFixed(6));
 }
 
-export function parseDeviceInfo(rawData: Uint8Array) {
+export function parseDeviceInfo(
+  rawData: Uint8Array
+): DeviceInfo | ParsedPacketData {
   const bytes = rawData.slice(15, 15 + 11);
   const firmwareMajorVersionRaw = bytes.slice(0, 1)[0]; // index 0
   const firmwareMinorVersionRaw = bytes.slice(1, 2)[0]; // index 1
@@ -296,7 +303,7 @@ export function parseDeviceInfo(rawData: Uint8Array) {
 export function parseInputReportID(
   rawData: Uint8Array,
   data: string
-): Partial<ParsedPacketData> {
+): ParsedPacketData {
   const inputReportID = {
     _raw: rawData.slice(0, 1), // index 0
     _hex: data.slice(0, 1),
@@ -317,7 +324,7 @@ export function parseInputReportID(
 export function parseTimer(
   rawData: Uint8Array,
   data: string
-): Partial<ParsedPacketData> {
+): ParsedPacketData {
   const timer = {
     _raw: rawData.slice(1, 2), // index 1
     _hex: data.slice(1, 2),
@@ -336,17 +343,21 @@ export function parseTimer(
  *   - `_hex`: The hexadecimal string representation of the battery level.
  *   - `level`: The calculated battery level using `calculateBatteryLevel`.
  */
-export function parseBatteryLevel(rawData: Uint8Array, data: string) {
-  const batteryLevel: Partial<ParsedPacketData> = {
+export function parseBatteryLevel(
+  rawData: Uint8Array,
+  data: string
+): BatteryLevel | ParsedPacketData {
+  return {
     _raw: rawData.slice(2, 3), // high nibble
     _hex: data.slice(2, 3),
     level: calculateBatteryLevel(data.slice(2, 3)),
   };
-
-  return batteryLevel;
 }
 
-export function parseConnectionInfo(rawData: Uint8Array, data: string) {
+export function parseConnectionInfo(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const connectionInfo = {
     _raw: rawData.slice(2, 3), // low nibble
     _hex: data.slice(2, 3),
@@ -355,7 +366,10 @@ export function parseConnectionInfo(rawData: Uint8Array, data: string) {
   return connectionInfo;
 }
 
-export function parseButtonStatus(rawData: Uint8Array, data: string) {
+export function parseButtonStatus(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const buttonStatus = {
     _raw: rawData.slice(1, 3), // index 1,2
     _hex: data.slice(1, 3),
@@ -401,7 +415,10 @@ export function parseCompleteButtonStatus(
   return buttonStatus;
 }
 
-export function parseAnalogStick(rawData: Uint8Array, data: string) {
+export function parseAnalogStick(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const analogStick = {
     _raw: rawData.slice(3, 4), // index 3
     _hex: data.slice(3, 4),
@@ -410,7 +427,10 @@ export function parseAnalogStick(rawData: Uint8Array, data: string) {
   return analogStick;
 }
 
-export function parseAnalogStickLeft(rawData: Uint8Array, data: string) {
+export function parseAnalogStickLeft(
+  rawData: Uint8Array,
+  data: string
+): AnalogStick | ParsedPacketData {
   let horizontal = rawData[6] | ((rawData[7] & 0xf) << 8);
 
   // ToDo: This should use proper calibration data and not a magic number
@@ -433,7 +453,10 @@ export function parseAnalogStickLeft(rawData: Uint8Array, data: string) {
   return analogStickLeft;
 }
 
-export function parseAnalogStickRight(rawData: Uint8Array, data: string) {
+export function parseAnalogStickRight(
+  rawData: Uint8Array,
+  data: string
+): AnalogStick | ParsedPacketData {
   let horizontal = rawData[9] | ((rawData[10] & 0xf) << 8);
 
   // ToDo: This should use proper calibration data and not a magic number
@@ -456,7 +479,10 @@ export function parseAnalogStickRight(rawData: Uint8Array, data: string) {
   return analogStickRight;
 }
 
-export function parseFilter(rawData: Uint8Array, data: string) {
+export function parseFilter(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const filter = {
     _raw: rawData.slice(4), // index 4
     _hex: data.slice(4),
@@ -465,7 +491,10 @@ export function parseFilter(rawData: Uint8Array, data: string) {
   return filter;
 }
 
-export function parseVibrator(rawData: Uint8Array, data: string) {
+export function parseVibrator(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const vibrator = {
     _raw: rawData.slice(12, 13), // index 12
     _hex: data.slice(12, 13),
@@ -474,7 +503,10 @@ export function parseVibrator(rawData: Uint8Array, data: string) {
   return vibrator;
 }
 
-export function parseAck(rawData: Uint8Array, data: string) {
+export function parseAck(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const ack = {
     _raw: rawData.slice(13, 14), // index 13
     _hex: data.slice(13, 14),
@@ -483,7 +515,10 @@ export function parseAck(rawData: Uint8Array, data: string) {
   return ack;
 }
 
-export function parseSubcommandID(rawData: Uint8Array, data: string) {
+export function parseSubcommandID(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const subcommandID = {
     _raw: rawData.slice(14, 15), // index 14
     _hex: data.slice(14, 15),
@@ -492,7 +527,10 @@ export function parseSubcommandID(rawData: Uint8Array, data: string) {
   return subcommandID;
 }
 
-export function parseSubcommandReplyData(rawData: Uint8Array, data: string) {
+export function parseSubcommandReplyData(
+  rawData: Uint8Array,
+  data: string
+): ParsedPacketData {
   const subcommandReplyData = {
     _raw: rawData.slice(15), // index 15 ~
     _hex: data.slice(15),
@@ -565,8 +603,8 @@ export function parseAccelerometers(
 export function parseGyroscopes(
   rawData: Uint8Array,
   data: string
-): Partial<ParsedPacketData>[][] {
-  const gyroscopes = [
+): (ParsedPacketData & GyroscopePacket)[][] {
+  return [
     [
       {
         _raw: rawData.slice(19, 21), // index 19,20
@@ -628,8 +666,6 @@ export function parseGyroscopes(
       },
     ],
   ];
-
-  return gyroscopes;
 }
 
 export function calculateActualAccelerometer(accelerometers: number[][]) {
@@ -650,7 +686,7 @@ export function calculateActualAccelerometer(accelerometers: number[][]) {
   return actualAccelerometer;
 }
 
-export function calculateActualGyroscope(gyroscopes: number[][]) {
+export function calculateActualGyroscope(gyroscopes: number[][]): Gyroscope {
   const elapsedTime = 0.005 * gyroscopes.length; // Spent 5ms to collect each data.
 
   const actualGyroscopes = [
@@ -676,12 +712,13 @@ export function calculateActualGyroscope(gyroscopes: number[][]) {
  *   - `_hex`: A slice of the hexadecimal string.
  *   - `strain`: The strain value as a signed 16-bit integer, little-endian.
  */
-export function parseRingCon(rawData: Uint8Array, data: string) {
-  const ringcon = {
+export function parseRingCon(
+  rawData: Uint8Array,
+  data: string
+): RingConDataPacket | ParsedPacketData {
+  return {
     _raw: rawData.slice(38, 2),
     _hex: data.slice(38, 2),
     strain: new DataView(rawData.buffer, 39, 2).getInt16(0, true),
   };
-
-  return ringcon;
 }
