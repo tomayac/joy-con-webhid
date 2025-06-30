@@ -10,7 +10,7 @@
     "controller"
   ],
   "scripts": {
-    "server": "cp dist/joy-con-webhid.es.js demo; npx http-server demo",
+    "server": "shx cp dist/joy-con-webhid.es.js demo; npx http-server demo",
     "start": "npx http-server",
     "lint": "npx eslint . --ext .ts,.js,.mjs --fix",
     "prepare": "npm run lint && npm run fix && npm run build",
@@ -42,6 +42,7 @@
     "globals": "^16.2.0",
     "http-server": "^14.1.1",
     "prettier": "^3.5.3",
+    "shx": "^0.4.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.34.1",
     "vite": "^6.3.5",
