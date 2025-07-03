@@ -1,26 +1,28 @@
-// from https://github.com/mascii/demo-of-ring-con-with-web-hid
+import type { SendReportAsyncFunctionOptions } from './types.ts';
 
-export const connectRingCon = async (device) => {
+// from https://github.com/mascii/demo-of-ring-con-with-web-hid
+export const connectRingCon = async (device: HIDDevice): Promise<void> => {
   const defineSendReportAsyncFunction = ({
     subcommand,
     expectedReport,
     timeoutErrorMessage = 'timeout.',
-  }) => {
-    return (device) =>
-      new Promise(async (resolve, reject) => {
+  }: SendReportAsyncFunctionOptions) => {
+    return (device: HIDDevice) =>
+      new Promise<void>((resolve, reject) => {
         const timeoutId = setTimeout(() => {
           device.removeEventListener('inputreport', checkInputReport);
           reject(new Error(timeoutErrorMessage));
         }, 5000);
 
-        const checkInputReport = (event) => {
-          if (event.reportId !== 0x21) {
+        const checkInputReport = (event: Event) => {
+          const inputEvent = event as HIDInputReportEvent;
+          if (inputEvent.reportId !== 0x21) {
             return;
           }
 
-          const data = new Uint8Array(event.data.buffer);
+          const data = new Uint8Array(inputEvent.data.buffer);
           for (const [key, value] of Object.entries(expectedReport)) {
-            if (data[key - 1] !== value) {
+            if (data[Number(key) - 1] !== value) {
               return;
             }
           }
@@ -30,32 +32,34 @@ export const connectRingCon = async (device) => {
           setTimeout(resolve, 50);
         };
         device.addEventListener('inputreport', checkInputReport);
-        await device.sendReport(
-          0x01,
-          new Uint8Array([
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            ...subcommand,
-          ])
-        );
-        // resolve();
+
+        (async () => {
+          await device.sendReport(
+            0x01,
+            new Uint8Array([
+              0x00,
+              0x00,
+              0x00,
+              0x00,
+              0x00,
+              0x00,
+              0x00,
+              0x00,
+              0x00,
+              ...subcommand,
+            ])
+          );
+          // resolve();
+        })();
       });
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const setInputReportModeTo0x30 = defineSendReportAsyncFunction({
-    subcommand: [0x03, 0x30],
-    expectedReport: {
-      14: 0x03,
-    },
-  });
+  // const setInputReportModeTo0x30 = defineSendReportAsyncFunction({
+  // 	subcommand: [0x03, 0x30],
+  // 	expectedReport: {
+  // 		14: 0x03,
+  // 	},
+  // });
   const enablingMCUData221 = defineSendReportAsyncFunction({
     subcommand: [0x22, 0x01],
     expectedReport: {
@@ -100,7 +104,7 @@ export const connectRingCon = async (device) => {
     },
   });
 
-  // await set_input_report_mode_to_0x30(device); // same as enableStandardFullMode
+  // await setInputReportModeTo0x30(device); // same as enableStandardFullMode
   await enablingMCUData221(device);
   await enablingMCUData212111(device);
   await getExtData59(device);

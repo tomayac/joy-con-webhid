@@ -4,7 +4,7 @@ import {
   JoyConLeft,
   JoyConRight,
   GeneralController,
-} from '../src/index.js';
+} from './joy-con-webhid.es.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
 const connectButtonRingCon = document.querySelector('#connect-ring-con');
@@ -16,7 +16,7 @@ const rootStyle = document.documentElement.style;
 connectButton.addEventListener('click', connectJoyCon);
 
 const visualize = (joyCon, packet) => {
-  if (!packet || !packet.actualOrientation) {
+  if (!packet?.actualOrientation) {
     return;
   }
   const {
@@ -25,7 +25,7 @@ const visualize = (joyCon, packet) => {
     actualGyroscope: gyroscope,
     actualOrientation: orientation,
     actualOrientationQuaternion: orientationQuaternion,
-    ringCon: ringCon,
+    ringCon,
   } = packet;
 
   if (joyCon instanceof JoyConLeft) {
@@ -111,14 +111,11 @@ const visualize = (joyCon, packet) => {
   if (showDebug.checked) {
     const controller = joyCon instanceof JoyConLeft ? debugLeft : debugRight;
     controller.querySelector('pre').textContent =
-      JSON.stringify(orientation, null, 2) +
-      '\n' +
-      JSON.stringify(orientationQuaternion, null, 2) +
-      '\n' +
-      JSON.stringify(gyroscope, null, 2) +
-      '\n' +
-      JSON.stringify(accelerometer, null, 2) +
-      '\n';
+      `${JSON.stringify(orientation, null, 2)}
+    ${JSON.stringify(orientationQuaternion, null, 2)}
+    ${JSON.stringify(gyroscope, null, 2)}
+    ${JSON.stringify(accelerometer, null, 2)}
+    `;
     const meterMultiplier = 300;
     controller.querySelector('#acc-x').value =
       accelerometer.x * meterMultiplier;
@@ -145,7 +142,7 @@ setInterval(async () => {
     }
     joyCon.eventListenerAttached = true;
     await joyCon.enableVibration();
-    joyCon.addEventListener('hidinput', (event) => {
+    joyCon.on('hidinput', (event) => {
       visualize(joyCon, event.detail);
     });
 
