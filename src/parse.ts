@@ -503,10 +503,7 @@ export function parseVibrator(
   return vibrator;
 }
 
-export function parseAck(
-  rawData: Uint8Array,
-  data: string
-): ParsedPacketData {
+export function parseAck(rawData: Uint8Array, data: string): ParsedPacketData {
   const ack = {
     _raw: rawData.slice(13, 14), // index 13
     _hex: data.slice(13, 14),
