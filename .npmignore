@@ -1,0 +1,10 @@
+demo/
+.github/
+src/
+.gitignore
+package-lock.json
+vite.config.ts
+tsconfig.json
+.prettierrc
+.prettierignore
+eslint.config.js
