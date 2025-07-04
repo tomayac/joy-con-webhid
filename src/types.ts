@@ -74,17 +74,6 @@ export type Quaternion = { w: number; x: number; y: number; z: number };
 
 export type ControllerTypeKey = 0x1 | 0x2 | 0x3;
 
-export interface EulerAngles {
-  heading: number; // Angle around Z-axis
-  pitch: number; // Angle around Y-axis
-  roll: number; // Angle around X-axis
-}
-
-export interface MadgwickOptions {
-  beta: number;
-  doInitialisation: boolean;
-}
-
 export interface SendReportAsyncFunctionOptions {
   subcommand: number[];
   expectedReport: Record<number, number>;
@@ -95,30 +84,6 @@ export type JoyConEvents = {
   hidinput: CustomEvent<JoyConDataPacket>;
   deviceinfo: CustomEvent<JoyConDataPacket>;
   batterylevel: CustomEvent<JoyConDataPacket>;
-};
-
-export type Madgwick = {
-  update: (
-    gx: number,
-    gy: number,
-    gz: number,
-    ax: number,
-    ay: number,
-    az: number,
-    mx?: number,
-    my?: number,
-    mz?: number,
-    deltaTimeSec?: number
-  ) => void;
-  init: (
-    ax: number,
-    ay: number,
-    az: number,
-    mx: number,
-    my: number,
-    mz: number
-  ) => void;
-  getQuaternion(): Quaternion;
 };
 
 export type CompleteButtonStatus = {

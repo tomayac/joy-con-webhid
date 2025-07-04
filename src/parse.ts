@@ -1,4 +1,4 @@
-import { Madgwick } from './madgwick.ts';
+import AHRS from 'ahrs';
 import type {
   Accelerometer,
   AccelerometerData,
@@ -209,12 +209,15 @@ export function toQuaternion(
   productId: number
 ): Quaternion {
   if (productId === 0x2006) {
-    const leftMadgwick = Madgwick(10);
+    const leftMadgwick = new AHRS({
+      sampleInterval: 10,
+      algorithm: 'Madgwick',
+    });
     leftMadgwick.update(gyro.x, gyro.y, gyro.z, accl.x, accl.y, accl.z);
     return leftMadgwick.getQuaternion();
   }
 
-  const rightMadgwick = Madgwick(10);
+  const rightMadgwick = new AHRS({ sampleInterval: 10, algorithm: 'Madgwick' });
   rightMadgwick.update(gyro.x, gyro.y, gyro.z, accl.x, accl.y, accl.z);
   return rightMadgwick.getQuaternion();
 }
