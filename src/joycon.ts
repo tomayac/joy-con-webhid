@@ -35,10 +35,7 @@ class JoyCon extends EventTarget {
       gamma: 0,
     };
 
-    if (device.productId === 0x2006) {
-      this.madgwick = new AHRS({ sampleInterval: 10, algorithm: 'Madgwick' });
-      this.quaternion = this.madgwick.getQuaternion();
-    } else if (device.productId === 0x2007) {
+    if (device.productId === 0x2006 || device.productId === 0x2007) {
       this.madgwick = new AHRS({ sampleInterval: 10, algorithm: 'Madgwick' });
       this.quaternion = this.madgwick.getQuaternion();
     }
