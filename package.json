@@ -15,7 +15,8 @@
     "lint": "npx eslint . --ext .ts,.js,.mjs --fix",
     "prepare": "npm run lint && npm run fix && npm run build",
     "fix": "npx prettier --write .",
-    "build": "npx tsc && npx vite build"
+    "build": "npx tsc && npx vite build",
+    "prepublishOnly": "npm run build"
   },
   "exports": {
     ".": {

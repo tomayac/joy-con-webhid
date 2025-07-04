@@ -1,11 +1,10 @@
 import { connectRingCon } from './connectRingCon.ts';
-import { Madgwick } from './madgwick.ts';
+import AHRS from 'ahrs';
 import * as PacketParser from './parse.ts';
 import type {
   JoyConDataPacket,
   JoyConEvents,
   JoyConLastValues,
-  Madgwick as MadgwickType,
   Quaternion,
 } from './types.ts';
 import { concatTypedArrays } from './utils.ts';
@@ -13,7 +12,7 @@ import { concatTypedArrays } from './utils.ts';
 class JoyCon extends EventTarget {
   eventListenerAttached = false;
   quaternion!: Quaternion;
-  madgwick!: MadgwickType;
+  madgwick!: AHRS;
   device: HIDDevice;
   lastValues: JoyConLastValues;
   ledstate = 0;
@@ -36,11 +35,8 @@ class JoyCon extends EventTarget {
       gamma: 0,
     };
 
-    if (device.productId === 0x2006) {
-      this.madgwick = Madgwick(10);
-      this.quaternion = this.madgwick.getQuaternion();
-    } else if (device.productId === 0x2007) {
-      this.madgwick = Madgwick(10);
+    if (device.productId === 0x2006 || device.productId === 0x2007) {
+      this.madgwick = new AHRS({ sampleInterval: 10, algorithm: 'Madgwick' });
       this.quaternion = this.madgwick.getQuaternion();
     }
   }
