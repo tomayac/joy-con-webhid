@@ -2,7 +2,7 @@ import {
   connectJoyCon,
   connectedJoyCons,
   JoyConLeft,
-} from '../dist/joy-con-webhid.es.js';
+} from './joy-con-webhid.es.js';
 
 const connectButton = document.querySelector('#connect-joy-cons');
 const connectMidiButton = document.querySelector('#connect-midi');
