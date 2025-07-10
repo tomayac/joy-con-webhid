@@ -267,7 +267,7 @@ function toRevolutionsPerSecond(value: Uint8Array): number {
 
 export function parseDeviceInfo(
   rawData: Uint8Array
-): DeviceInfo | ParsedPacketData {
+): DeviceInfo & ParsedPacketData {
   const bytes = rawData.slice(15, 15 + 11);
   const firmwareMajorVersionRaw = bytes.slice(0, 1)[0]; // index 0
   const firmwareMinorVersionRaw = bytes.slice(1, 2)[0]; // index 1
@@ -715,7 +715,7 @@ export function calculateActualGyroscope(gyroscopes: number[][]): Gyroscope {
 export function parseRingCon(
   rawData: Uint8Array,
   data: string
-): RingConDataPacket | ParsedPacketData {
+): RingConDataPacket & ParsedPacketData {
   return {
     _raw: rawData.slice(38, 2),
     _hex: data.slice(38, 2),

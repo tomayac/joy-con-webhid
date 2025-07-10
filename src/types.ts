@@ -20,28 +20,30 @@ export type JoyConLastValues = {
   gamma: number;
 };
 
-export type JoyConDataPacket = {
+export type RawJoyConDataPacket = {
   inputReportID: ParsedPacketData;
-  buttonStatus: ParsedPacketData | Partial<CompleteButtonStatus>;
-  analogStick: ParsedPacketData | AnalogStick;
   filter: ParsedPacketData;
   timer: ParsedPacketData;
-  batteryLevel: ParsedPacketData | BatteryLevel;
   connectionInfo: ParsedPacketData;
-  analogStickLeft: ParsedPacketData | AnalogStick;
-  analogStickRight: ParsedPacketData | AnalogStick;
   vibrator: ParsedPacketData;
   ack: ParsedPacketData;
   subcommandID: ParsedPacketData;
   subcommandReplyData: ParsedPacketData;
-  deviceInfo: ParsedPacketData | DeviceInfo;
+};
+
+export type CompleteJoyConData = {
   accelerometers: AccelerometerData[];
   actualAccelerometer: {
     x: number;
     y: number;
     z: number;
   };
-  gyroscopes: (ParsedPacketData | GyroscopePacket)[][];
+  actualOrientationQuaternion: {
+    alpha: string;
+    beta: string;
+    gamma: string;
+  };
+  quaternion: Quaternion;
   actualGyroscope: {
     dps: {
       x: number;
@@ -59,14 +61,29 @@ export type JoyConDataPacket = {
     beta: string;
     gamma: string;
   };
-  actualOrientationQuaternion: {
-    alpha: string;
-    beta: string;
-    gamma: string;
-  };
-  quaternion: Quaternion;
-  ringCon: RingConDataPacket | ParsedPacketData;
+  ringCon: RingConDataPacket & ParsedPacketData;
+  deviceInfo: DeviceInfo & ParsedPacketData;
 };
+
+export type CompleteJoyConDataPacket = {
+  buttonStatus: CompleteButtonStatus;
+  analogStick: AnalogStick;
+  batteryLevel: BatteryLevel;
+  analogStickLeft: AnalogStick;
+  analogStickRight: AnalogStick;
+  gyroscopes: GyroscopePacket[][];
+} & RawJoyConDataPacket &
+  CompleteJoyConData;
+
+export type ParsedJoyconPacketData = {
+  buttonStatus: ParsedPacketData;
+  analogStick: ParsedPacketData;
+  batteryLevel: ParsedPacketData;
+  analogStickLeft: ParsedPacketData;
+  analogStickRight: ParsedPacketData;
+  gyroscopes: ParsedPacketData[][];
+} & RawJoyConDataPacket &
+  CompleteJoyConData;
 
 export type Gyroscope = { x: number; y: number; z: number };
 export type Accelerometer = { x: number; y: number; z: number };
@@ -81,9 +98,9 @@ export interface SendReportAsyncFunctionOptions {
 }
 
 export type JoyConEvents = {
-  hidinput: CustomEvent<JoyConDataPacket>;
-  deviceinfo: CustomEvent<JoyConDataPacket>;
-  batterylevel: CustomEvent<JoyConDataPacket>;
+  hidinput: CustomEvent<ParsedJoyconPacketData | CompleteJoyConDataPacket>;
+  deviceinfo: CustomEvent<ParsedJoyconPacketData | CompleteJoyConDataPacket>;
+  batterylevel: CustomEvent<ParsedJoyconPacketData | CompleteJoyConDataPacket>;
 };
 
 export type CompleteButtonStatus = {
@@ -118,9 +135,9 @@ export type DeviceInfo = {
     major: number;
     minor: number;
   };
-  type: ControllerTypeKey;
+  type: string;
   macAddress: string;
-  spiColorInUse: string;
+  spiColorInUse: boolean;
 };
 
 export type BatteryLevel = {
