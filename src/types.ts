@@ -20,7 +20,7 @@ export type JoyConLastValues = {
   gamma: number;
 };
 
-export type RawJoyConDataPacket = {
+type RawJoyConDataPacket = {
   inputReportID: ParsedPacketData;
   filter: ParsedPacketData;
   timer: ParsedPacketData;
@@ -31,7 +31,7 @@ export type RawJoyConDataPacket = {
   subcommandReplyData: ParsedPacketData;
 };
 
-export type CompleteJoyConData = {
+type CompleteJoyConData = {
   accelerometers: AccelerometerData[];
   actualAccelerometer: {
     x: number;
