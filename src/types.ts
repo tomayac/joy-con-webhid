@@ -75,7 +75,7 @@ export type CompleteJoyConDataPacket = {
 } & RawJoyConDataPacket &
   CompleteJoyConData;
 
-export type ParsedJoyconPacketData = {
+export type ParsedJoyConPacketData = {
   buttonStatus: ParsedPacketData;
   analogStick: ParsedPacketData;
   batteryLevel: ParsedPacketData;
@@ -98,9 +98,9 @@ export interface SendReportAsyncFunctionOptions {
 }
 
 export type JoyConEvents = {
-  hidinput: CustomEvent<ParsedJoyconPacketData | CompleteJoyConDataPacket>;
-  deviceinfo: CustomEvent<ParsedJoyconPacketData | CompleteJoyConDataPacket>;
-  batterylevel: CustomEvent<ParsedJoyconPacketData | CompleteJoyConDataPacket>;
+  hidinput: CustomEvent<ParsedJoyConPacketData | CompleteJoyConDataPacket>;
+  deviceinfo: CustomEvent<ParsedJoyConPacketData | CompleteJoyConDataPacket>;
+  batterylevel: CustomEvent<ParsedJoyConPacketData | CompleteJoyConDataPacket>;
 };
 
 export type CompleteButtonStatus = {
