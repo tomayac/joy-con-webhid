@@ -18,6 +18,7 @@
     "build": "npx tsc && npx vite build",
     "prepublishOnly": "npm run build"
   },
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/joy-con-webhid.es.js",
