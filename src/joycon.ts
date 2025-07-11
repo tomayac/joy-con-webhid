@@ -2,7 +2,7 @@ import { connectRingCon } from './connectRingCon.ts';
 import AHRS from 'ahrs';
 import * as PacketParser from './parse.ts';
 import type {
-  ParsedJoyconPacketData,
+  ParsedJoyConPacketData,
   JoyConEvents,
   JoyConLastValues,
   Quaternion,
@@ -527,7 +527,7 @@ class JoyCon extends EventTarget {
       .map((byte) => byte.toString(16).padStart(2, '0'))
       .join('');
 
-    let packet: Partial<ParsedJoyconPacketData | CompleteJoyConDataPacket> = {
+    let packet: Partial<ParsedJoyConPacketData | CompleteJoyConDataPacket> = {
       inputReportID: PacketParser.parseInputReportID(fullData, hexData),
     };
 
@@ -538,7 +538,7 @@ class JoyCon extends EventTarget {
           buttonStatus: PacketParser.parseButtonStatus(fullData, hexData),
           analogStick: PacketParser.parseAnalogStick(fullData, hexData),
           filter: PacketParser.parseFilter(fullData, hexData),
-        } as Partial<ParsedJoyconPacketData>;
+        } as Partial<ParsedJoyConPacketData>;
         break;
       }
       case 0x21:
