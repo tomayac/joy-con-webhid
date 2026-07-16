@@ -54,6 +54,7 @@
     "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
-    "ahrs": "^1.3.3"
+    "ahrs": "^1.3.3",
+    "joy-con-webhid": "^0.11.0"
   }
 }
